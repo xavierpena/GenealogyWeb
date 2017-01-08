@@ -41,7 +41,8 @@
     },
     "MySql.Data.EntityFrameworkCore": "7.0.6-IR31",
     "GenealogyWeb.Core": "1.0.0-*",
-    "React.AspNet": "3.0.0"
+    "React.AspNet": "3.0.0",
+    "Webpack": "3.0.0"
   },
 
   "tools": {
