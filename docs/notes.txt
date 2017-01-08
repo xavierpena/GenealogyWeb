@@ -1,0 +1,26 @@
+todo:
+
+- Make TableName public 
+- Make repository generic? <T>
+
+---
+
+> AspHostPortal
+http://asphostportal.com/Windows-Shared-Hosting-Plans.aspx
+
+> Dotnet core sqlite
+https://docs.microsoft.com/en-us/ef/core/get-started/netcore/new-db-sqlite
+
+> Dotnet core mysql
+http://insidemysql.com/howto-starting-with-mysql-ef-core-provider-and-connectornet-7-0-4/
+
+> Asp core mysql
+http://insidemysql.com/getting-started-with-asp-net-core-and-mysql-connectornet/
+
+> Publishing an ASP.NET Core website to a cheap Linux VM host
+http://www.hanselman.com/blog/PublishingAnASPNETCoreWebsiteToACheapLinuxVMHost.aspx
+
+---
+
+> ASP.NET Core Multi-tenancy: Data Isolation with Entity Framework
+http://benfoster.io/blog/aspnet-core-multi-tenancy-data-isolation-with-entity-framework

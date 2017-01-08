@@ -1,0 +1,70 @@
+﻿<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<script src="http://handsontable.com/dist/handsontable.full.js"></script>
+<link rel="stylesheet" media="screen" href="http://handsontable.com/dist/handsontable.full.css">
+
+<input id="search_field" type="search" placeholder="Search">
+<p id="search_results"></p>
+
+<div id="handsontable"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    var colHeaders = @ViewData["colHeaders"];
+    var data = @ViewData["data"];
+
+  var
+    handsontableDiv = document.getElementById("handsontable"),
+    handsontableObj, searchField, searchResults,
+    searchResultCount = 0;
+
+  function searchResultCounter(instance, row, col, value, result) {
+    Handsontable.Search.DEFAULT_CALLBACK.apply(this, arguments);
+
+    if (result) {
+      searchResultCount++;
+    }
+  }
+
+  handsontableObj = new Handsontable(handsontableDiv,{
+    data: data,
+    colHeaders: colHeaders,
+    search: {
+      callback: searchResultCounter
+    }
+  });
+  searchField = document.getElementById('search_field');
+  searchResults = document.getElementById('search_results');
+
+  Handsontable.Dom.addEvent(searchField, 'keyup', function(event) {
+    var queryResult;
+
+    searchResultCount = 0;
+    queryResult = handsontableObj.search.query(this.value);
+	var text = '';
+	if(searchResultCount > 0)
+	{
+		text += searchResultCount.toString() + ' results:\r\n';
+		for(var index=0; index<queryResult.length; index++)
+		{
+			var rowIndex = queryResult[index].row;
+			var rowData = data[rowIndex];
+			text += '> { ';
+			for(var columnIndex=0; columnIndex<rowData.length; columnIndex++)
+			{
+				if(rowData[columnIndex])
+				{
+					text += colHeaders[columnIndex] + '="' + rowData[columnIndex] + '"; ';
+				}
+			}
+			text += '}\r\n';
+		}
+	}
+    searchResults.innerText = text;
+    handsontableObj.render();
+  });
+
+});
+</script>
