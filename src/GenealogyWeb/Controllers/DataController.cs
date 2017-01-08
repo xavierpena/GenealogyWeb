@@ -24,47 +24,24 @@ namespace GenealogyWeb.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
-        PersonaRepository _personaRepository;
+
+        private PersonaRepository _personaRepository;
+        private MatrimoniRepository _matrimoniRepository;
+        private FillRepository _fillRepository;
 
         public DataController(
         UserManager<ApplicationUser> userManager,
         ILoggerFactory loggerFactory,
-        PersonaRepository personaRepository)
+        PersonaRepository personaRepository,
+        MatrimoniRepository matrimoniRepository,
+        FillRepository fillRepository)
         {
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<ManageController>();
+
             _personaRepository = personaRepository;
-        }
-
-        public IActionResult React()
-        {
-            return View();
-        }
-
-        public ActionResult Comments()
-        {
-            var comments = new List<CommentModel>
-            {
-                new CommentModel
-                {
-                    Id = 1,
-                    Author = "Daniel Lo Nigro",
-                    Text = "Hello ReactJS.NET World!"
-                },
-                new CommentModel
-                {
-                    Id = 2,
-                    Author = "Pete Hunt",
-                    Text = "This is one comment"
-                },
-                new CommentModel
-                {
-                    Id = 3,
-                    Author = "Jordan Walke",
-                    Text = "This is *another* comment"
-                },
-            };
-            return Json(comments);
+            _matrimoniRepository = matrimoniRepository;
+            _fillRepository = fillRepository;
         }
 
         public IActionResult Index()
@@ -75,15 +52,26 @@ namespace GenealogyWeb.Controllers
                 // AUTHORIZE
                 if (user.Email == "xavierpenya@gmail.com")
                 {
-                    var header = $"[\"search_key\",\"id\",\"nom\",\"llinatge_1\",\"llinatge_2\",\"home\",\"naixement_lloc\",\"naixement_data\",\"mort_lloc\",\"mort_data\",\"info\",\"observacions\"]";
-                    var rows = default(IEnumerable<string>);
-                    var persones = _personaRepository.GetAll();
-                    rows = persones.Select(x => $"[\"{x.GetSearchKey()}\",\"{x.id}\",\"{x.nom}\",\"{x.llinatge_1}\",\"{x.llinatge_2}\",\"{x.home}\",\"{x.naixement_lloc}\",\"{x.naixement_data}\",\"{x.mort_lloc}\",\"{x.mort_data}\",\"{x.info}\",\"{x.observacions}\"]");
+                    ViewData["Title"] = "Genealogia";
 
-                    ViewData["data"] = new HtmlString("[" + string.Join(",", rows) + "]");
-                    ViewData["colHeaders"] = new HtmlString(header);
-                    ViewData["Title"] = "Persones";
-                    
+                    var persones = _personaRepository.GetAll();
+                    var personesRows = persones.Select(x => $"[\"{x.GetSearchKey()}\",\"{x.id}\",\"{x.nom}\",\"{x.llinatge_1}\",\"{x.llinatge_2}\",\"{x.home}\",\"{x.naixement_lloc}\",\"{x.naixement_data}\",\"{x.mort_lloc}\",\"{x.mort_data}\",\"{x.info}\",\"{x.observacions}\"]");
+                    ViewData["title1"] = "Persones";
+                    ViewData["data1"] = new HtmlString("[" + string.Join(",", personesRows) + "]");
+                    ViewData["colHeaders1"] = new HtmlString($"[\"search_key\",\"id\",\"nom\",\"llinatge_1\",\"llinatge_2\",\"home\",\"naixement_lloc\",\"naixement_data\",\"mort_lloc\",\"mort_data\",\"info\",\"observacions\"]");
+
+                    var matrimonis = _matrimoniRepository.GetAll();
+                    var matrimonisRows = matrimonis.Select(x => $"[\"{x.GetSearchKey()}\",\"{x.id}\",\"{x.home_id}\",\"{x.dona_id}\",\"{x.lloc}\",\"{x.data}\",\"{x.observacions}\"]");
+                    ViewData["title2"] = "Matrimonis";
+                    ViewData["data2"] = new HtmlString("[" + string.Join(",", matrimonisRows) + "]");
+                    ViewData["colHeaders2"] = new HtmlString($"[\"search_key\",\"id\",\"home_id\",\"dona_id\",\"lloc\",\"data\",\"observacions\"]");
+
+                    var fills = _fillRepository.GetAll();
+                    var fillsRows = fills.Select(x => $"[\"{x.GetSearchKey()}\",\"{x.id}\",\"{x.matrimoni_id}\",\"{x.persona_id}\",\"{x.observacions}\"]");
+                    ViewData["title3"] = "Fills";
+                    ViewData["data3"] = new HtmlString("[" + string.Join(",", fillsRows) + "]");
+                    ViewData["colHeaders3"] = new HtmlString($"[\"search_key\",\"id\",\"matrimoni_id\",\"persona_id\",\"observacions\"]");
+
                     return View();
                 }
             }

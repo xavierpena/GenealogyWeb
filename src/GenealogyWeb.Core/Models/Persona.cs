@@ -45,7 +45,7 @@ namespace GenealogyWeb.Core.Models
         }
 
         public string GetSearchKey()
-            => $"{id}/{nom}/{llinatge_1}/{llinatge_2}";
+            => $"id:{id}/{nom}/{llinatge_1}/{llinatge_2}";
             
     }
 }

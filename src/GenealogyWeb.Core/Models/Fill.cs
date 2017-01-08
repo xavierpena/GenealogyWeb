@@ -11,5 +11,8 @@ namespace GenealogyWeb.Core.Models
         public int matrimoni_id { get; set; }
         public int persona_id { get; set; }
         public string observacions { get; set; }
+
+        public object GetSearchKey()
+           => $"id:{id};matrimoni_id:{matrimoni_id};persona_id={persona_id}";
     }
 }

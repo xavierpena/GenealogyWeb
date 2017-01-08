@@ -18,5 +18,8 @@ namespace GenealogyWeb.Core.Models
 
         public override string ToString()
             => $"{id}; {data}; {lloc}; {observacions};";
+
+        public object GetSearchKey()
+           => $"id:{id};home_id:{home_id};dona_id={dona_id}";
     }
 }

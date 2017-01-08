@@ -58,6 +58,8 @@ namespace GenealogyWeb
 
             // Custom repositories:
             services.AddSingleton(new PersonaRepository(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddSingleton(new MatrimoniRepository(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddSingleton(new FillRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             // React:
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

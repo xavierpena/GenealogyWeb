@@ -9,67 +9,43 @@
 <link rel="stylesheet" href="~/lib/pikaday/css/pikaday.css" />
 <link rel="stylesheet" href="~/lib/handsontable/dist/handsontable.css" />
 
-<input id="search_field" type="search" placeholder="Search">
-<p id="search_results"></p>
+<script src="~/js/handsontable-script.js"></script>
 
-<div id="handsontable"></div>
+
+<h3>@ViewData["title1"]</h3>
+
+<input id="search_field1" type="search" placeholder="Search">
+<p id="search_results1"></p>
+
+<div id="handsontable1"></div>
+
+<hr/>
+
+
+<h3>@ViewData["title2"]</h3>
+
+<input id="search_field2" type="search" placeholder="Search">
+<p id="search_results2"></p>
+
+<div id="handsontable2"></div>
+
+<hr />
+
+
+<h3>@ViewData["title3"]</h3>
+
+<input id="search_field3" type="search" placeholder="Search">
+<p id="search_results3"></p>
+
+<div id="handsontable3"></div>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
 
-    var colHeaders = @ViewData["colHeaders"];
-    var data = @ViewData["data"];
-
-  var
-    handsontableDiv = document.getElementById("handsontable"),
-    handsontableObj, searchField, searchResults,
-    searchResultCount = 0;
-
-  function searchResultCounter(instance, row, col, value, result) {
-    Handsontable.Search.DEFAULT_CALLBACK.apply(this, arguments);
-
-    if (result) {
-      searchResultCount++;
-    }
-  }
-
-  handsontableObj = new Handsontable(handsontableDiv,{
-    data: data,
-    colHeaders: colHeaders,
-    search: {
-      callback: searchResultCounter
-    }
-  });
-  searchField = document.getElementById('search_field');
-  searchResults = document.getElementById('search_results');
-
-  Handsontable.Dom.addEvent(searchField, 'keyup', function(event) {
-    var queryResult;
-
-    searchResultCount = 0;
-    queryResult = handsontableObj.search.query(this.value);
-	var text = '';
-	if(searchResultCount > 0)
-	{
-		text += searchResultCount.toString() + ' results:\r\n';
-		for(var index=0; index<queryResult.length; index++)
-		{
-			var rowIndex = queryResult[index].row;
-			var rowData = data[rowIndex];
-			text += '> { ';
-			for(var columnIndex=0; columnIndex<rowData.length; columnIndex++)
-			{
-				if(rowData[columnIndex])
-				{
-					text += colHeaders[columnIndex] + '="' + rowData[columnIndex] + '"; ';
-				}
-			}
-			text += '}\r\n';
-		}
-	}
-    searchResults.innerText = text;
-    handsontableObj.render();
-  });
+    handsontableScript("handsontable1", "search_field1", "search_results1", @ViewData["colHeaders1"], @ViewData["data1"]);
+    handsontableScript("handsontable2", "search_field2", "search_results2", @ViewData["colHeaders2"], @ViewData["data2"]);
+    handsontableScript("handsontable3", "search_field3", "search_results3", @ViewData["colHeaders3"], @ViewData["data3"]);
 
 });
 </script>
