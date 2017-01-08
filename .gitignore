@@ -1,2 +1,8 @@
 /src/GenealogyWeb/Properties
 /src/GenealogyWeb.Core/Properties
+/src/GenealogyWeb/bin
+/src/GenealogyWeb/obj
+/src/GenealogyWeb.Core/bin
+/src/GenealogyWeb.Core/obj
+/src/GenealogyWeb/project.lock.json
+/src/.vs
