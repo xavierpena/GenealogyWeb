@@ -12,40 +12,152 @@
 <script src="~/js/handsontable-script.js"></script>
 
 
-<h3>@ViewData["title1"]</h3>
+<button name="save" id="save" class="intext-btn">Save</button>
+<pre id="pending_changes" class="console"></pre>
+<pre id="save_result" class="console"></pre>
 
-<input id="search_field1" type="search" placeholder="Search">
-<p id="search_results1"></p>
 
-<div id="handsontable1"></div>
+<h3>@ViewData["title_1"]</h3>
+
+<input id="search_field_persons" type="search" placeholder="Search">
+<pre id="search_result_persons"></pre>
+
+<div id="handsontable_persons"></div>
 
 <hr/>
 
 
-<h3>@ViewData["title2"]</h3>
+<h3>@ViewData["title_2"]</h3>
 
-<input id="search_field2" type="search" placeholder="Search">
-<p id="search_results2"></p>
+<input id="search_field_marriages" type="search" placeholder="Search">
+<pre id="search_result_marriages"></pre>
 
-<div id="handsontable2"></div>
+<div id="handsontable_marriages"></div>
 
 <hr />
 
 
-<h3>@ViewData["title3"]</h3>
+<h3>@ViewData["title_3"]</h3>
 
-<input id="search_field3" type="search" placeholder="Search">
-<p id="search_results3"></p>
+<input id="search_field_sons" type="search" placeholder="Search">
+<pre id="search_result_sons"></pre>
 
-<div id="handsontable3"></div>
+<div id="handsontable_sons"></div>
 
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function() {
 
-    handsontableScript("handsontable1", "search_field1", "search_results1", @ViewData["colHeaders1"], @ViewData["data1"]);
-    handsontableScript("handsontable2", "search_field2", "search_results2", @ViewData["colHeaders2"], @ViewData["data2"]);
-    handsontableScript("handsontable3", "search_field3", "search_results3", @ViewData["colHeaders3"], @ViewData["data3"]);
+        var saveResult = document.getElementById("save_result");
 
-});
+        var elements = new Array();
+
+        var element = function(id, colHeaders, data) {
+            this.id = id;
+            this.pendingChanges = {};
+            this.pendingChangeCounter = 0;
+            this.colHeaders = colHeaders;
+            this.data = data;            
+            this.getRowDataAsText = function(rowData)
+            {
+                var text = '> { ';
+                for (var columnIndex = 0; columnIndex < rowData.length; columnIndex++) {
+                    if (rowData[columnIndex]) {
+                        text += this.colHeaders[columnIndex] + '="' + rowData[columnIndex] + '"; ';
+                    }
+                }
+                text += '}';
+
+                return text;
+            };
+            this.addPendingChange = function(rowIndex, rowData) 
+            {
+                if(!(rowIndex in this.pendingChanges))
+                {
+                    this.pendingChangeCounter ++;                    
+                }
+                this.pendingChanges[rowIndex] = rowData;                
+            };
+        };
+
+        var personsKey = 'persons';
+        var marriagesKey = 'marriages';
+        var sonsKey = 'sons';
+
+        elements.push(new element(personsKey, @ViewData["colHeaders_1"], @ViewData["data_1"]));
+        elements.push(new element(marriagesKey, @ViewData["colHeaders_2"], @ViewData["data_2"]));
+        elements.push(new element(sonsKey, @ViewData["colHeaders_3"], @ViewData["data_3"]));
+
+        var pendingChangesDiv = document.getElementById('pending_changes');
+
+        /**
+        * Shows the pending changes as text.
+        */
+        function visualizePendingChanges()
+        {
+            var text = "Pending changes:\r\n";
+            for(var elementIndex=0; elementIndex<elements.length; elementIndex++)
+            {
+                var element = elements[elementIndex];
+                text += '\r\n' + element.id + ' (' + element.pendingChangeCounter + ')' + ":\r\n";
+                for(var rowIndex in element.pendingChanges)
+                {
+                    var rowData = element.pendingChanges[rowIndex];
+                    text += element.getRowDataAsText(rowData) + "\r\n";
+                }
+            }
+            pendingChangesDiv.innerText = text;
+        }
+
+        /**
+        * Click on Save button
+        **/
+        Handsontable.Dom.addEvent(save, 'click', function () {
+
+            var data = getDataToSend();
+            console.log(JSON.stringify( data ));
+
+            // save all cell's data
+            $.ajax({
+                url: "/Data/Save",
+                type: "POST",
+                data: JSON.stringify( data ),
+                contentType: "application/json",
+                complete: function (res) {
+                    if (res.resultText === '"ok"') {
+                        saveResult.innerText = 'Data saved';
+                    }
+                    else {
+                        saveResult.innerText = 'Save error';
+                    }
+                }
+            });
+        });
+
+        /**
+        * Collects all data to send into a single object.
+        **/
+        function getDataToSend()
+        {
+            var data = {};
+            for(var elementIndex=0; elementIndex<elements.length; elementIndex++)
+            {
+                var element = elements[elementIndex];
+                var changes = [];
+                var changeCount = 0;
+                for(var rowIndex in element.pendingChanges)
+                {                    
+                    changes[changeCount]=element.pendingChanges[rowIndex];
+                    changeCount++;
+                }
+                data[element.id] = changes;
+            }
+            return data;
+        }
+
+        handsontableScript(elements[0], visualizePendingChanges);
+        handsontableScript(elements[1], visualizePendingChanges);
+        handsontableScript(elements[2], visualizePendingChanges);
+
+    });
 </script>

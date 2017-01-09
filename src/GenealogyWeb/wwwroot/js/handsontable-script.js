@@ -1,34 +1,36 @@
-﻿function handsontableScript(divId, searchId, resultsId, colHeaders, data)
+﻿function handsontableScript(element, visualizePendingChanges)
 {
+    // DOM elements:
+    var
+      handsontableDiv = document.getElementById("handsontable_" + element.id),
+      searchField = document.getElementById("search_field_" + element.id),
+      searchResult = document.getElementById("search_result_" + element.id);
+    
+    // Other global variables:
+    var handsontableObj;
+    var searchResultCount = 0;
 
-        var
-          handsontableDiv = document.getElementById(divId),
-          handsontableObj, searchField, searchResults,
-          searchResultCount = 0;
-
-        function searchResultCounter(instance, row, col, value, result) {
-            Handsontable.Search.DEFAULT_CALLBACK.apply(this, arguments);
-
-            if (result)
-            {
-                searchResultCount++;
-            }
-        }
+    // pending changes contains rowIndex as key, and rowData as value:
+    var pendingChanges = new Array();
   
-
-        handsontableObj = new Handsontable(handsontableDiv,{
-          data: data,
-        colHeaders: colHeaders,
+    /**
+    * Initializes handsontable
+    */
+    handsontableObj = new Handsontable(handsontableDiv,{
+        data: element.data,
+        colHeaders: element.colHeaders,
         height: 400,
+        minSpareRows: 1,
         search:
         {
             callback: searchResultCounter
         }
     });
-      searchField = document.getElementById(searchId);
-      searchResults = document.getElementById(resultsId);
 
-      Handsontable.Dom.addEvent(searchField, 'keyup', function(event)
+    /**
+    * Search
+    **/
+    Handsontable.Dom.addEvent(searchField, 'keyup', function(event)
     {
         var queryResult;
 
@@ -42,23 +44,37 @@
             for (var index = 0; index < queryResult.length; index++)
             {
                 var rowIndex = queryResult[index].row;
-                if (addedRowIndexes.indexOf(rowIndex) == -1)
+                if (addedRowIndexes.indexOf(rowIndex) === -1)
                 {
                     addedRowIndexes.push(rowIndex);
-                    var rowData = data[rowIndex];
-                    text += '> { ';
-                    for (var columnIndex = 0; columnIndex < rowData.length; columnIndex++)
-                    {
-                        if (rowData[columnIndex])
-                        {
-                            text += colHeaders[columnIndex] + '="' + rowData[columnIndex] + '"; ';
-                        }
-                    }
-                    text += '}\r\n';
+                    var rowData = handsontableObj.getSourceDataAtRow(rowIndex);
+                    text += element.getRowDataAsText(rowData) + '\r\n';
                 }
             }
         }
-        searchResults.innerText = text;
+        searchResult.innerText = text;
         handsontableObj.render();
     });
+
+    /**
+    * Updates search result counter
+    **/
+    function searchResultCounter(instance, row, col, value, result) {
+        Handsontable.Search.DEFAULT_CALLBACK.apply(this, arguments);
+        if (result) {
+            searchResultCount++;
+        }
+    }
+
+    /**
+    * On cell change. Local hook (has same effect as a callback).
+    * @param changes: 2D array containing information about each of the edited cells [[row, prop, oldVal, newVal], ...]
+    **/
+    handsontableObj.addHook('afterChange', function (changes, source) {
+        var rowIndex = changes[0][0];
+        var rowData = handsontableObj.getSourceDataAtRow(rowIndex);
+        element.addPendingChange(rowIndex, rowData);
+        visualizePendingChanges();
+    });
+
 }

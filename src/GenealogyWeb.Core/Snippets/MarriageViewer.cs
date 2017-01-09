@@ -83,7 +83,7 @@ namespace GenealogyWeb.Core.Snippets
             if (_matrimoni.dona_id != null)
                 Dona = _personaRepository.GetById(_matrimoni.dona_id.Value);
 
-            var fills = _fillRepository.GetAllByMarriageId(_matrimoni.id);
+            var fills = _fillRepository.GetAllByMarriageId(_matrimoni.id.Value);
             if (fills != null)
             {
                 Fills = _personaRepository.GetAllByIds(fills.Select(x => x.persona_id));

@@ -7,7 +7,7 @@ namespace GenealogyWeb.Core.Models
 {
     public class Persona
     {
-        public int id { get; set; }
+        public int? id { get; set; }
         public string generacio { get; set; }
         public string id_6 { get; set; }
         public string id_5 { get; set; }
@@ -46,6 +46,22 @@ namespace GenealogyWeb.Core.Models
 
         public string GetSearchKey()
             => $"id:{id}/{nom}/{llinatge_1}/{llinatge_2}";
-            
+        
+        public static Persona PersonaFromArray(string[] values)
+            => new Persona
+            {
+                id = values[0] == null ? default(int?) : int.Parse(values[0]),
+                nom = values[1],
+                llinatge_1 = values[2],
+                llinatge_2 = values[3],
+                home = bool.Parse(values[4]),
+                naixement_data = values[5],
+                naixement_lloc = values[6],
+                mort_data = values[7],
+                mort_lloc = values[8],
+                info = values[9],
+                observacions = values[10]
+            };
+
     }
 }
