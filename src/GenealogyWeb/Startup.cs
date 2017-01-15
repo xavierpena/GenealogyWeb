@@ -20,6 +20,7 @@ using React.AspNet;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace GenealogyWeb
 {
@@ -117,6 +118,11 @@ namespace GenealogyWeb
             app.UseStaticFiles();
 
             app.UseIdentity();
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
