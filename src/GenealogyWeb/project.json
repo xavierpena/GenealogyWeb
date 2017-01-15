@@ -39,7 +39,6 @@
       "version": "1.0.0-preview2-final",
       "type": "build"
     },
-	"MySql.Data": "7.0.6-IR31",
     "MySql.Data.EntityFrameworkCore": "7.0.6-IR31",
     "GenealogyWeb.Core": "1.0.0-*",
     "React.AspNet": "3.0.0",
