@@ -17,6 +17,19 @@ namespace GenealogyWeb.Core.Business.Tree
 
     public class PersonNode
     {
+        private PersonNode personNode;
+
+        public PersonNode()
+        {
+            // empty contstructor
+        }
+
+        public PersonNode(PersonNode personNode)
+        {
+            this.name = personNode.name + " (duplicate!)";
+            this.@class = personNode.@class;
+        }
+
         // The name of the node:
         public string name { get; set; }
 
@@ -27,7 +40,7 @@ namespace GenealogyWeb.Core.Business.Tree
         public string textClass { get; set; }
 
         // Generational height offset:
-        public int depthOffset { get; set; }
+        public int? depthOffset { get; set; }
 
         // Marriages is a list of nodes:
         public List<MarriageNode> marriages { get; set; }

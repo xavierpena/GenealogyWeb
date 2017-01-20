@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<meta charset="utf-8">
+<style type="text/css">
+    body {
+        font: 10px sans-serif;
+    }
+
+    .linage {
+        fill: none;
+        stroke: #000;
+    }
+
+    .marriage {
+        fill: none;
+        stroke: black;
+    }
+
+    .man {
+        background-color: lightblue;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    .woman {
+        background-color: pink;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    .emphasis {
+        font-style: italic;
+    }
+
+    p {
+        padding: 0;
+        margin: 0;
+    }
+</style>
+
+<script src="~/js/dtree/d3.v3.min.js"></script>
+<script src="~/js/dtree/lodash.min.js"></script>
+<script src="~/js/dtree/dTree.min.js"></script>
+
+<body>
+    <h1>@ViewData["Title"]</h1>
+
+    <div id="graph" style="border: 3px solid black"></div>
+
+    <script>
+        var treeData = @ViewData["json"];
+        init(treeData);
+        function init(treeData) {
+            dTree.init(treeData, {
+                target: "#graph",
+                debug: true,
+                height: 800,
+                width: 1200,
+                callbacks: {
+                    nodeClick: function(name, extra) {
+                        console.log(name);
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

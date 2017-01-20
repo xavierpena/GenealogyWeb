@@ -1,4 +1,7 @@
 ﻿/// <autosync enabled="true" />
+/// <reference path="js/dtree/d3.v3.min.js" />
+/// <reference path="js/dtree/dtree.min.js" />
+/// <reference path="js/dtree/lodash.min.js" />
 /// <reference path="js/handsontable-script.js" />
 /// <reference path="js/site.js" />
 /// <reference path="lib/bootstrap/dist/js/bootstrap.js" />

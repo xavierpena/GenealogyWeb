@@ -49,10 +49,30 @@ namespace GenealogyWeb.Core.Business.Tree
             Init();
 
             var sonIds = _sons.Select(x => x.persona_id).ToList();
-            var marriedPeopleIds = _marriages.Where(x => x.home_id != null).Select(x => x.home_id).ToList();
-            marriedPeopleIds.AddRange(_marriages.Where(x => x.dona_id != null).Select(x => x.dona_id).ToList());
 
-            var topLevelPersonIds = marriedPeopleIds.Where(x => !sonIds.Contains(x.Value)).ToList();
+            var marriedMenIds = _marriages.Where(x => x.home_id != null).Select(x => x.home_id).ToList();
+            var marriedWomenIds = _marriages.Where(x => x.dona_id != null).Select(x => x.dona_id).ToList();
+
+            var noParentsMarriedMenIds = marriedMenIds.Where(x => !sonIds.Contains(x.Value)).ToList();
+            var noParentsMarriedWomenIds = marriedWomenIds.Where(x => !sonIds.Contains(x.Value)).ToList();
+            
+            // Remove woman from top-level complete couples (complete = contains both man and woman):
+            foreach(var marriage in _marriages)
+            {
+                if (noParentsMarriedWomenIds.Contains(marriage.dona_id))
+                {
+                    if(marriage.home_id != null)
+                    {
+                        noParentsMarriedWomenIds.Remove(marriage.dona_id);
+                    }
+                }                        
+            }
+            
+            var topLevelPersonIds = new List<int?>();
+            foreach (var id in noParentsMarriedMenIds)
+                topLevelPersonIds.Add(id);
+            foreach (var id in noParentsMarriedWomenIds)
+                topLevelPersonIds.Add(id);
 
             var topLevelPersonNodes = new List<PersonNode>();
             foreach(var id in topLevelPersonIds)
@@ -64,10 +84,18 @@ namespace GenealogyWeb.Core.Business.Tree
             return topLevelPersonNodes;
         }
 
+        public object GetResult(int personId)
+        {
+            Init();
+            var person = _persons.Where(x => x.id == personId).Single();
+            var personNode = GetDeepNode(person);
+            return new List<PersonNode> { personNode };
+        }
+
         private PersonNode GetDeepNode(Persona person)
         {
             if (_processed.ContainsKey(person))
-                return _processed[person];
+                return new PersonNode(_processed[person]);
 
             var personNode = new PersonNode
             {
@@ -90,7 +118,7 @@ namespace GenealogyWeb.Core.Business.Tree
                 {                    
                     if (_processed.ContainsKey(partner))
                     {
-                        partnerNode = _processed[partner];
+                        partnerNode = new PersonNode(_processed[partner]); ;
                     }
                     else
                     {
@@ -112,20 +140,23 @@ namespace GenealogyWeb.Core.Business.Tree
                         var sonPerson = _persons.Where(x => x.id == son.persona_id).Single();
                         var sonNode = default(PersonNode);
                         if (_processed.ContainsKey(sonPerson))
-                            sonNode = _processed[sonPerson];
+                            sonNode = new PersonNode(_processed[sonPerson]);
                         else
                             sonNode = GetDeepNode(sonPerson);
                         childrenNodes.Add(sonNode);
                     }
                 }
 
-                var marriageNode = new MarriageNode
+                if(partnerNode != null && childrenNodes != null)
                 {
-                    spouse = partnerNode,
-                    children = childrenNodes
-                };
+                    var marriageNode = new MarriageNode
+                    {
+                        spouse = partnerNode,
+                        children = childrenNodes
+                    };
 
-                personNode.AddMarriage(marriageNode);
+                    personNode.AddMarriage(marriageNode);
+                }
             }
                        
             return personNode;

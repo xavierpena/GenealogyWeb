@@ -1,4 +1,5 @@
-﻿using GenealogyWeb.Core.Models;
+﻿using GenealogyWeb.Core.Business.Tree;
+using GenealogyWeb.Core.Models;
 using GenealogyWeb.Core.Repositories;
 using GenealogyWeb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -31,12 +33,15 @@ namespace GenealogyWeb.Controllers
         private MatrimoniRepository _marriageRepository;
         private FillRepository _sonRepository;
 
+        private TreeBuilder _treeBuilder;
+
         public DataController(
         UserManager<ApplicationUser> userManager,
         ILoggerFactory loggerFactory,
         PersonaRepository personRepository,
         MatrimoniRepository marriageRepository,
-        FillRepository sonRepository)
+        FillRepository sonRepository,
+        TreeBuilder treeBuilder)
         {
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<ManageController>();
@@ -44,6 +49,8 @@ namespace GenealogyWeb.Controllers
             _personRepository = personRepository;
             _marriageRepository = marriageRepository;
             _sonRepository = sonRepository;
+
+            _treeBuilder = treeBuilder;
         }
 
         public IActionResult Index()
@@ -113,6 +120,38 @@ namespace GenealogyWeb.Controllers
                 .ToList();
 
             return new JsonResult("ok");
+        }
+
+        public IActionResult Tree()
+        {
+            var result = _treeBuilder.GetResult();
+            var json = JsonConvert.SerializeObject(
+                            result,
+                            Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore
+                            });
+            var encodedJson = new HtmlString(json);
+            ViewData["Title"] = "Tree";
+            ViewData["json"] = encodedJson;
+            return View();
+        }
+
+        public IActionResult PersonTree(int personId)
+        {
+            var result = _treeBuilder.GetResult(personId);
+            var json = JsonConvert.SerializeObject(
+                            result,
+                            Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore
+                            });
+            var encodedJson = new HtmlString(json);
+            ViewData["Title"] = "Tree";
+            ViewData["json"] = encodedJson;
+            return View("Tree");
         }
 
     }
