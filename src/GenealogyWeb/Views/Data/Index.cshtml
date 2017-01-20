@@ -19,6 +19,8 @@
 
 <h3>@ViewData["title_1"]</h3>
 
+<a href="popupex.html" onclick="return popitup('tree')">Show full genealogy</a>
+
 <input id="search_field_persons" type="search" placeholder="Search">
 <pre id="search_result_persons"></pre>
 
@@ -46,6 +48,13 @@
 
 
 <script>
+
+    function popitup(url) {
+        newwindow=window.open(url,'name','height=800,width=600');
+        if (window.focus) {newwindow.focus()}
+        return false;
+    }      
+
     document.addEventListener("DOMContentLoaded", function() {
 
         var saveResult = document.getElementById("save_result");

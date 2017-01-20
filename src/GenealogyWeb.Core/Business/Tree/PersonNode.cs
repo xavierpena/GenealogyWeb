@@ -26,7 +26,7 @@ namespace GenealogyWeb.Core.Business.Tree
 
         public PersonNode(PersonNode personNode)
         {
-            this.name = personNode.name + " (duplicate!)";
+            this.name = personNode.name + " | ⚠ DUPLICATE";
             this.@class = personNode.@class;
         }
 
