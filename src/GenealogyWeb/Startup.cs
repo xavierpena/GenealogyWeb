@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.HttpOverrides;
+using GenealogyWeb.Core.Business.Tree;
 
 namespace GenealogyWeb
 {
@@ -49,18 +50,24 @@ namespace GenealogyWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connStr = Configuration.GetConnectionString("DefaultConnection");
+
+            if (connStr == null)
+                throw new ArgumentNullException("Connection string cannot be null");
+
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
+                    options.UseMySQL(connStr));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            // Custom repositories:
-            services.AddSingleton(new PersonaRepository(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddSingleton(new MatrimoniRepository(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddSingleton(new FillRepository(Configuration.GetConnectionString("DefaultConnection")));
+            // Custom services:
+            services.AddTransient(provider => new PersonaRepository(connStr));
+            services.AddTransient(provider => new MatrimoniRepository(connStr));
+            services.AddTransient(provider => new FillRepository(connStr));
+            services.AddTransient<TreeBuilder>();
 
             // React:
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

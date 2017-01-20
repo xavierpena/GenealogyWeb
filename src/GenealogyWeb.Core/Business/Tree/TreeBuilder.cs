@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GenealogyWeb.Business.Tree
+namespace GenealogyWeb.Core.Business.Tree
 {
 
     /// <summary>
     /// Source:
     /// https://github.com/ErikGartner/dTree
     /// </summary>
-    public class Builder
+    public class TreeBuilder
     {
         private PersonaRepository _personRepository;
         private MatrimoniRepository _marriageRepository;
@@ -24,7 +24,7 @@ namespace GenealogyWeb.Business.Tree
 
         private Dictionary<Persona, PersonNode> _processed;
 
-        public Builder(
+        public TreeBuilder(
             PersonaRepository personRepository,
             MatrimoniRepository marriageRepository,
             FillRepository sonRepository)
@@ -44,23 +44,24 @@ namespace GenealogyWeb.Business.Tree
         }
 
         // https://github.com/ErikGartner/dTree
-        public string GetJson()
+        public List<PersonNode> GetResult()
         {
             Init();
 
             var sonIds = _sons.Select(x => x.persona_id).ToList();
-            var marriedPeopleIds = _marriages.Select(x => x.home_id).ToList();
-            marriedPeopleIds.AddRange(_marriages.Select(x => x.dona_id).ToList());
+            var marriedPeopleIds = _marriages.Where(x => x.home_id != null).Select(x => x.home_id).ToList();
+            marriedPeopleIds.AddRange(_marriages.Where(x => x.dona_id != null).Select(x => x.dona_id).ToList());
 
-            var topLevelPersonIds = marriedPeopleIds.Where(x => !sonIds.Contains(x.Value));
+            var topLevelPersonIds = marriedPeopleIds.Where(x => !sonIds.Contains(x.Value)).ToList();
 
             var topLevelPersonNodes = new List<PersonNode>();
             foreach(var id in topLevelPersonIds)
             {
                 var person = _persons.Where(x => x.id == id).Single();
+                topLevelPersonNodes.Add(GetDeepNode(person));
             }
 
-            return "!!! NOT SET UP YET !!!";
+            return topLevelPersonNodes;
         }
 
         private PersonNode GetDeepNode(Persona person)
@@ -103,7 +104,12 @@ namespace GenealogyWeb.Business.Tree
                     foreach (var son in sons)
                     {
                         var sonPerson = _persons.Where(x => x.id == son.persona_id).Single();
-                        childrenNodes.Add(GetDeepNode(sonPerson));
+                        var sonNode = default(PersonNode);
+                        if (_processed.ContainsKey(sonPerson))
+                            sonNode = _processed[sonPerson];
+                        else
+                            sonNode = GetDeepNode(sonPerson);
+                        childrenNodes.Add(sonNode);
                     }
                 }
 

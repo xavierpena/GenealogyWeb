@@ -21,7 +21,7 @@ namespace GenealogyWeb.Controllers
         public string Text { get; set; }
     }
 
-    [Authorize]
+    //[Authorize]
     public class DataController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
