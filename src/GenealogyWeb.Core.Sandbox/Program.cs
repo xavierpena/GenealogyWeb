@@ -24,7 +24,8 @@ namespace GenealogyWeb.Core.Sandbox
             ConfigureServices();
 
             // TEST:
-            var tmp = ServiceProvider.GetService<PersonaRepository>().GetAll();
+            var dataTreeTests = ServiceProvider.GetService<DataTreeTests>();
+            dataTreeTests.Process();
         }
 
         private static void Startup()
@@ -45,12 +46,15 @@ namespace GenealogyWeb.Core.Sandbox
             if (connStr == null)
                 throw new ArgumentNullException("Connection string cannot be null");
 
-            // Add our interfaces/implementation to collection
-            // Custom repositories:
+            // Add interfaces/implementation to collection
+            // External services:
             services.AddTransient(provider => new PersonaRepository(connStr));
             services.AddTransient(provider => new MatrimoniRepository(connStr));
             services.AddTransient(provider => new FillRepository(connStr));
             services.AddTransient<TreeBuilder>();
+
+            // Internal services:
+            services.AddTransient<DataTreeTests>();
 
             // Build our service provider from collection
             ServiceProvider = services.BuildServiceProvider();

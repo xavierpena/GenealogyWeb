@@ -34,5 +34,13 @@ namespace GenealogyWeb.Core.Business.Tree
 
         // Custom data passed to the renderers:
         public Extra extra { get; set; }
+
+        public void AddMarriage(MarriageNode marriageNode)
+        {
+            if (this.marriages == null)
+                this.marriages = new List<MarriageNode>();
+
+            this.marriages.Add(marriageNode);
+        }
     }
 }

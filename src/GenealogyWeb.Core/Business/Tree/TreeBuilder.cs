@@ -66,6 +66,9 @@ namespace GenealogyWeb.Core.Business.Tree
 
         private PersonNode GetDeepNode(Persona person)
         {
+            if (_processed.ContainsKey(person))
+                return _processed[person];
+
             var personNode = new PersonNode
             {
                 name = person.ToString(),
@@ -74,26 +77,29 @@ namespace GenealogyWeb.Core.Business.Tree
 
             _processed.Add(person, personNode);
 
-            var marriage = _marriages
+            var marriages = _marriages
                 .Where(x => x.home_id == person.id || x.dona_id == person.id)
-                .SingleOrDefault();
+                .ToList();
 
-            if(marriage != null)
+            foreach(var marriage in marriages)
             {
                 var partnerId = (marriage.home_id == person.id) ? marriage.dona_id : marriage.home_id;
                 var partner = _persons.Where(x => x.id == partnerId).SingleOrDefault();
                 var partnerNode = default(PersonNode);
-                if (_processed.ContainsKey(partner))
-                {
-                    partnerNode = _processed[partner];
-                }
-                else
-                {
-                    partnerNode = new PersonNode
+                if (partner != null)
+                {                    
+                    if (_processed.ContainsKey(partner))
                     {
-                        name = partner.ToString(),
-                        @class = partner.home ? "man" : "woman",
-                    };
+                        partnerNode = _processed[partner];
+                    }
+                    else
+                    {
+                        partnerNode = new PersonNode
+                        {
+                            name = partner.ToString(),
+                            @class = partner.home ? "man" : "woman",
+                        };
+                    }
                 }
 
                 var childrenNodes = default(List<PersonNode>);
@@ -119,7 +125,7 @@ namespace GenealogyWeb.Core.Business.Tree
                     children = childrenNodes
                 };
 
-                personNode.marriages.Add(marriageNode);
+                personNode.AddMarriage(marriageNode);
             }
                        
             return personNode;
