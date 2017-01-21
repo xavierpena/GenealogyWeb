@@ -1,4 +1,5 @@
-﻿using GenealogyWeb.Core.Business.Tree;
+﻿using GenealogyWeb.Core.Business.DownwardTree;
+using GenealogyWeb.Core.Business.UpwardTree;
 using GenealogyWeb.Core.Models;
 using GenealogyWeb.Core.Repositories;
 using GenealogyWeb.Models;
@@ -33,7 +34,8 @@ namespace GenealogyWeb.Controllers
         private MatrimoniRepository _marriageRepository;
         private FillRepository _sonRepository;
 
-        private TreeBuilder _treeBuilder;
+        private DownwardTreeBuilder _downwardTreeBuilder;
+        private UpwardTreeBuilder _upwardTreeBuilder;
 
         public DataController(
         UserManager<ApplicationUser> userManager,
@@ -41,7 +43,8 @@ namespace GenealogyWeb.Controllers
         PersonaRepository personRepository,
         MatrimoniRepository marriageRepository,
         FillRepository sonRepository,
-        TreeBuilder treeBuilder)
+        DownwardTreeBuilder downwardTreeBuilder,
+        UpwardTreeBuilder upwardTreeBuilder)
         {
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<ManageController>();
@@ -50,7 +53,8 @@ namespace GenealogyWeb.Controllers
             _marriageRepository = marriageRepository;
             _sonRepository = sonRepository;
 
-            _treeBuilder = treeBuilder;
+            _downwardTreeBuilder = downwardTreeBuilder;
+            _upwardTreeBuilder = upwardTreeBuilder;
         }
 
         public IActionResult Index()
@@ -123,9 +127,9 @@ namespace GenealogyWeb.Controllers
             return new JsonResult("ok");
         }
 
-        public IActionResult Tree()
+        public IActionResult DownwardTree()
         {
-            var result = _treeBuilder.GetResult();
+            var result = _downwardTreeBuilder.GetResult();
             var json = JsonConvert.SerializeObject(
                             result,
                             Formatting.None,
@@ -139,9 +143,9 @@ namespace GenealogyWeb.Controllers
             return View();
         }
 
-        public IActionResult PersonTree(int personId)
+        public IActionResult PersonDownwardTree(int personId)
         {
-            var result = _treeBuilder.GetResult(personId);
+            var result = _downwardTreeBuilder.GetResult(personId);
             var json = JsonConvert.SerializeObject(
                             result,
                             Formatting.None,
@@ -152,7 +156,23 @@ namespace GenealogyWeb.Controllers
             var encodedJson = new HtmlString(json);
             ViewData["Title"] = "Tree";
             ViewData["json"] = encodedJson;
-            return View("Tree");
+            return View("DownwardTree");
+        }
+
+        public IActionResult UpwardTree(int personId)
+        {
+            var result = _upwardTreeBuilder.GetResult(personId);
+            var json = JsonConvert.SerializeObject(
+                            result,
+                            Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore
+                            });
+            var encodedJson = new HtmlString(json);
+            ViewData["Title"] = "Tree";
+            ViewData["json"] = encodedJson;
+            return View();
         }
 
     }

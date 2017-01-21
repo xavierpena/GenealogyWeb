@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using GenealogyWeb.Core.Repositories;
-using GenealogyWeb.Core.Business.Tree;
+using GenealogyWeb.Core.Business.DownwardTree;
+using GenealogyWeb.Core.Business.UpwardTree;
 
 namespace GenealogyWeb.Core.Sandbox
 {
@@ -51,7 +52,8 @@ namespace GenealogyWeb.Core.Sandbox
             services.AddTransient(provider => new PersonaRepository(connStr));
             services.AddTransient(provider => new MatrimoniRepository(connStr));
             services.AddTransient(provider => new FillRepository(connStr));
-            services.AddTransient<TreeBuilder>();
+            services.AddTransient<DownwardTreeBuilder>();
+            services.AddTransient<UpwardTreeBuilder>();
 
             // Internal services:
             services.AddTransient<DataTreeTests>();

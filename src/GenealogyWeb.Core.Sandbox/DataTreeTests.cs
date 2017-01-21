@@ -1,4 +1,5 @@
-﻿using GenealogyWeb.Core.Business.Tree;
+﻿using GenealogyWeb.Core.Business.DownwardTree;
+using GenealogyWeb.Core.Business.UpwardTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +9,19 @@ namespace GenealogyWeb.Core.Sandbox
 {
     public class DataTreeTests
     {
-        private TreeBuilder _treeBuilder;
-        public DataTreeTests(TreeBuilder treeBuilder)
+        private DownwardTreeBuilder _downwardTreeBuilder;
+        private UpwardTreeBuilder _upwardTreeBuilder;
+        public DataTreeTests(DownwardTreeBuilder downwardTreeBuilder,
+            UpwardTreeBuilder upwardTreeBuilder)
         {
-            _treeBuilder = treeBuilder;
+            _downwardTreeBuilder = downwardTreeBuilder;
+            _upwardTreeBuilder = upwardTreeBuilder;
         }
 
         public void Process()
         {
-            var test = _treeBuilder.GetResult();
+            //var test = _downwardTreeBuilder.GetResult();
+            var test = _upwardTreeBuilder.GetResult(1);
         }
     }
 }

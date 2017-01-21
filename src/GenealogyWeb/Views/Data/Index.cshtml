@@ -12,14 +12,16 @@
 <script src="~/js/handsontable-script.js"></script>
 
 
+<div>
+    <a href="popupex.html" onclick="return popitup('/data/tree')">Show full genealogy</a>
+</div>
+
 <button name="save" id="save" class="intext-btn">Save</button>
 <pre id="pending_changes" class="console"></pre>
 <pre id="save_result" class="console"></pre>
 
 
 <h3>@ViewData["title_1"]</h3>
-
-<a href="popupex.html" onclick="return popitup('tree')">Show full genealogy</a>
 
 <input id="search_field_persons" type="search" placeholder="Search">
 <pre id="search_result_persons"></pre>

@@ -8,3 +8,7 @@
 /src/.vs
 /src/GenealogyWeb/wwwroot/lib
 /scripts
+/src/GenealogyWeb.Core.Sandbox/bin
+/src/GenealogyWeb.Core.Sandbox/obj
+/src/GenealogyWeb.Core.Sandbox/Properties
+/src/GenealogyWeb.Core.Sandbox/project.lock.json

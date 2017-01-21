@@ -21,7 +21,8 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.HttpOverrides;
-using GenealogyWeb.Core.Business.Tree;
+using GenealogyWeb.Core.Business.DownwardTree;
+using GenealogyWeb.Core.Business.UpwardTree;
 
 namespace GenealogyWeb
 {
@@ -67,7 +68,8 @@ namespace GenealogyWeb
             services.AddTransient(provider => new PersonaRepository(connStr));
             services.AddTransient(provider => new MatrimoniRepository(connStr));
             services.AddTransient(provider => new FillRepository(connStr));
-            services.AddTransient<TreeBuilder>();
+            services.AddTransient<DownwardTreeBuilder>();
+            services.AddTransient<UpwardTreeBuilder>();
 
             // React:
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

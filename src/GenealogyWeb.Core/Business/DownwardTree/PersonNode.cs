@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GenealogyWeb.Core.Business.Tree
+namespace GenealogyWeb.Core.Business.DownwardTree
 {
     public class MarriageNode
     {

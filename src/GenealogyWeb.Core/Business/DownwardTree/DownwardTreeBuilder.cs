@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GenealogyWeb.Core.Business.Tree
+namespace GenealogyWeb.Core.Business.DownwardTree
 {
 
     /// <summary>
     /// Source:
     /// https://github.com/ErikGartner/dTree
     /// </summary>
-    public class TreeBuilder
+    public class DownwardTreeBuilder
     {
         private PersonaRepository _personRepository;
         private MatrimoniRepository _marriageRepository;
@@ -24,7 +24,7 @@ namespace GenealogyWeb.Core.Business.Tree
 
         private Dictionary<Persona, PersonNode> _processed;
 
-        public TreeBuilder(
+        public DownwardTreeBuilder(
             PersonaRepository personRepository,
             MatrimoniRepository marriageRepository,
             FillRepository sonRepository)
@@ -92,7 +92,7 @@ namespace GenealogyWeb.Core.Business.Tree
                 .ToList();
         }
 
-        public object GetResult(int personId)
+        public List<PersonNode> GetResult(int personId)
         {
             Init();
             var person = _persons.Where(x => x.id == personId).Single();
