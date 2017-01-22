@@ -140,7 +140,7 @@ namespace GenealogyWeb.Controllers
             var encodedJson = new HtmlString(json);
             ViewData["Title"] = "Tree";
             ViewData["json"] = encodedJson;
-            return View();
+            return View("UpwardTree");
         }
 
         public IActionResult PersonDownwardTree(int personId)
@@ -156,7 +156,7 @@ namespace GenealogyWeb.Controllers
             var encodedJson = new HtmlString(json);
             ViewData["Title"] = "Tree";
             ViewData["json"] = encodedJson;
-            return View("DownwardTree");
+            return View("UpwardTree");
         }
 
         public IActionResult UpwardTree(int personId)
