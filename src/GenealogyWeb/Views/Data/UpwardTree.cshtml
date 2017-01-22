@@ -233,7 +233,7 @@
             }
         };
         childCount(0, root);
-        var newHeight = d3.max(levelWidth) * 25; // 25 pixels per line
+        var newHeight = d3.max(levelWidth) * 100; // 25 pixels per line
         tree = tree.size([newHeight, viewerWidth]);
 
         // Compute the new tree layout.
@@ -396,7 +396,7 @@
     root.x0 = viewerHeight / 2;
     root.y0 = 0;
 
-	root.children.forEach(collapse);
+	//root.children.forEach(collapse);
 
     // Layout the tree initially and center on the root node.
     update(root);

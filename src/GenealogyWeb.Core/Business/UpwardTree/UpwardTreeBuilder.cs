@@ -19,6 +19,11 @@ namespace GenealogyWeb.Core.Business.UpwardTree
 
         private Dictionary<Persona, JsonItem> _processed;
 
+        private const string UnknownStr = "✗";
+        private const string MaleSignStr = "♂";
+        private const string FemaleSignStr = "♀";
+        private const string MarriageSignStr = "⚤";
+
         public UpwardTreeBuilder(
             PersonaRepository personRepository,
             MatrimoniRepository marriageRepository,
@@ -38,14 +43,24 @@ namespace GenealogyWeb.Core.Business.UpwardTree
             _sons = _sonRepository.GetAll().ToList();
         }
 
-        public JsonItem GetResult(int personId)
+        public JsonItem GetResult(int rootPersonId)
         {
             Init();
-            var person = _persons.Where(x => x.id == personId).Single();
+            var person = _persons.Where(x => x.id == rootPersonId).Single();
             var personNode = GetDeepNode(person);
             return personNode;
         }
 
+        /// <summary>
+        /// Builds a JsnoItem with:
+        /// 
+        /// - The name of the person as the root node
+        /// - His/her parent's marriage as a child node
+        /// - From the marriage node:
+        ///     * Add the deep node from the father
+        ///     * Add the deep node from the mother
+        ///     
+        /// </summary>
         private JsonItem GetDeepNode(Persona person)
         {
             if (_processed.ContainsKey(person))
@@ -60,45 +75,68 @@ namespace GenealogyWeb.Core.Business.UpwardTree
             if(sonOf != null)
             {
                 var marriage = _marriages.Where(x => x.id == sonOf.matrimoni_id).Single();
+
                 var father = _persons.Where(x => x.id == marriage.home_id).SingleOrDefault();
                 var mother = _persons.Where(x => x.id == marriage.dona_id).SingleOrDefault();
 
-                var marriageNode = new JsonItem("⚭");
+                var marriageNode = new JsonItem($"{MarriageSignStr} Marriage @ { GetYear(GetStr(marriage.data)) }");
                 personNode.AddChild(marriageNode);
 
-                var fatherNode = default(JsonItem);
-                var motherNode = default(JsonItem);
+                var fatherNode = default(JsonItem);                
                 if (father != null)
-                {
                     fatherNode = GetDeepNode(father);
-                    marriageNode.AddChild(fatherNode);
-                }
-                    
+                else
+                    fatherNode = new JsonItem($"{MaleSignStr} (unknown)");
+                marriageNode.AddChild(fatherNode);
+
+                var motherNode = default(JsonItem);
                 if (mother != null)
-                {
                     motherNode = GetDeepNode(mother);
-                    marriageNode.AddChild(motherNode);
-                }                                    
+                else
+                    motherNode = new JsonItem($"{FemaleSignStr} (unknown)");
+
+                marriageNode.AddChild(motherNode);
+                                                 
             }
 
             return personNode;
         }        
 
+        /// <summary>
+        /// Full person description formatted as:
+        /// `male/female_sign name/surname1/surname2 (birth=>death) id=XXX`
+        /// </summary>
         private string GetPersonDescription(Persona person)
-            => $"{GetStr(person.nom)}/{GetStr(person.llinatge_1)}/{GetStr(person.llinatge_2)} ({GetStr(person.naixement_data) }=>{GetStr(person.mort_data)}) id={person.id}";
+            => $"{ (person.home ? MaleSignStr : FemaleSignStr) } {GetStr(person.nom)}/{GetStr(person.llinatge_1)}/{GetStr(person.llinatge_2)}" 
+                + $" ({GetYear(GetStr(person.naixement_data)) }=>{GetYear(GetStr(person.mort_data))})" 
+                + $" id={person.id}";
 
+        /// <summary>
+        /// Cleans the string.
+        /// If the string shows no info, returns `UnknownStr`
+        /// </summary>
         private string GetStr(string inputStr)
-        {
-            var unknownStr = "✗";
-
+        {           
             if (inputStr == null)
-                return unknownStr;
+                return UnknownStr;
 
             inputStr = inputStr.Trim();
             if (inputStr == "")
-                return unknownStr;
+                return UnknownStr;
 
             return inputStr;
+        }
+
+        /// <summary>
+        /// Gets only the year from the date.
+        /// Expectects a date formatted as 'yyyy-MM-dd'
+        /// </summary>
+        private string GetYear(string inputStr)
+        {
+            if (inputStr != UnknownStr)
+                return inputStr.Split('-')[0];
+            else
+                return inputStr;
         }
 
     }

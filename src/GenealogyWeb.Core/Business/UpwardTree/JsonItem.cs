@@ -16,9 +16,13 @@ namespace GenealogyWeb.Core.Business.UpwardTree
             this.children = null;
         }
 
+        /// <summary>
+        /// This constructor is only used when a node already exists.
+        /// The goal is to avoid circular dependency when transforming the object to json string.
+        /// </summary>
         public JsonItem(JsonItem item)
         {
-            this.name = item.name + " | ⚠ DUPLICATE";
+            this.name = "[ ⚠ DUPLICATE ] " + item.name;
         }
 
         public void AddChild(JsonItem jsonItem)
