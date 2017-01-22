@@ -2,9 +2,9 @@
 {
     // DOM elements:
     var
-      handsontableDiv = document.getElementById("handsontable_" + element.id),
-      searchField = document.getElementById("search_field_" + element.id),
-      searchResult = document.getElementById("search_result_" + element.id);
+      handsontableDiv = document.getElementById("handsontable_" + element.typeId),
+      searchField = document.getElementById("search_field_" + element.typeId),
+      searchResult = document.getElementById("search_result_" + element.typeId);
     
     // Other global variables:
     var handsontableObj;
@@ -48,11 +48,12 @@
                 {
                     addedRowIndexes.push(rowIndex);
                     var rowData = handsontableObj.getSourceDataAtRow(rowIndex);
-                    text += element.getRowDataAsText(rowData) + '\r\n';
+                    var rowHtml = element.getRowAsHtmlResultItem(rowData);
+                    text += rowHtml;
                 }
             }
         }
-        searchResult.innerText = text;
+        searchResult.innerHTML = text;
         handsontableObj.render();
     });
 

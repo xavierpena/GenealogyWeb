@@ -112,18 +112,7 @@ namespace GenealogyWeb.Controllers
 
         public JsonResult Save([FromBody] DataToSaveModel dataToSaveModel)
         {
-            var persons = dataToSaveModel.persons?
-                .Select(x => Persona.PersonaFromArray(x.Skip(1).ToArray()))
-                .ToList();
-
-            var marriages = dataToSaveModel.marriages?
-                .Select(x => Matrimoni.MatrimoniFromArray(x.Skip(1).ToArray()))
-                .ToList();
-
-            var sons = dataToSaveModel.sons?
-                .Select(x => Fill.FillFromArray(x.Skip(1).ToArray()))
-                .ToList();
-
+            dataToSaveModel.Parse();            
             return new JsonResult("ok");
         }
 
@@ -178,6 +167,43 @@ namespace GenealogyWeb.Controllers
     }
 
     public class DataToSaveModel
+    {
+        public PendingItemsModel toInsertOrUpdate { get; set; }
+        public PendingItemsModel toRemove { get; set; }        
+
+        public ParsedItems ParsedInsertOrUpdates { get; set; }
+        public ParsedItems ParsedRemoves { get; set; }
+
+        public void Parse()
+        {
+            this.ParsedInsertOrUpdates = new ParsedItems(this.toInsertOrUpdate);
+            this.ParsedRemoves = new ParsedItems(this.toRemove);
+        }
+    }
+
+    public class ParsedItems
+    {
+        public List<Persona> Persons { get; set; }
+        public List<Matrimoni> Marriages { get; set; }
+        public List<Fill> Sons { get; set; }
+
+        public ParsedItems(PendingItemsModel pendingItemsModel)
+        {
+            this.Persons = pendingItemsModel.persons?
+                .Select(x => Persona.PersonaFromArray(x.Skip(1).ToArray()))
+                .ToList();
+
+            this.Marriages = pendingItemsModel.marriages?
+                .Select(x => Matrimoni.MatrimoniFromArray(x.Skip(1).ToArray()))
+                .ToList();
+
+            this.Sons = pendingItemsModel.sons?
+                .Select(x => Fill.FillFromArray(x.Skip(1).ToArray()))
+                .ToList();
+        }
+    }
+
+    public class PendingItemsModel
     {
         public List<List<string>> persons { get; set; }
         public List<List<string>> marriages { get; set; }

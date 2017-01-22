@@ -13,7 +13,7 @@
 
 
 <div>
-    <a href="popupex.html" onclick="return popitup('/data/tree')">Show full genealogy</a>
+    <a href="#" onclick="return popitup('/data/downwardtree')">Show full genealogy</a>
 </div>
 
 <button name="save" id="save" class="intext-btn">Save</button>
@@ -52,7 +52,7 @@
 <script>
 
     function popitup(url) {
-        newwindow=window.open(url,'name','height=800,width=600');
+        newwindow=window.open(url,'name','height=800,width=1200');
         if (window.focus) {newwindow.focus()}
         return false;
     }      
@@ -63,15 +63,39 @@
 
         var elements = new Array();
 
-        var element = function(id, colHeaders, data) {
-            this.id = id;
+        var element = function(typeId, colHeaders, data) {
+
+            this.typeId = typeId;
+
             this.pendingChanges = {};
             this.pendingChangeCounter = 0;
+
+            this.pendingDeletes = {};     
+            this.pendingDeleteCounter = 0;
+
             this.colHeaders = colHeaders;
-            this.data = data;            
+            this.data = data;
+
+            this.getRowAsHtmlResultItem = function(rowData) {
+
+                var text = this.getRowDataAsText(rowData);
+                var elementId = rowData[1];
+                
+                var onclick1 = "'/data/persondownwardtree?personId=" + elementId + "'";
+                var link1 = '<a href="#" onclick="return popitup(' + onclick1 + ')">downward tree</a>';
+
+                var onclick2 = "'/data/upwardtree?personId=" + elementId + "'";
+                var link2 = '<a href="#" onclick="return popitup(' + onclick2 + ')">upwward tree</a>';
+
+                // TODO: implement delete
+                var linkHtml = '<div>' + link1 + ' | ' + link2 + ' | <a href="#" onclick="">delete</a> | ' + text + '</div>';
+                return linkHtml;            
+
+            };
+
             this.getRowDataAsText = function(rowData)
             {
-                var text = '> { ';
+                var text = '{ ';
                 for (var columnIndex = 0; columnIndex < rowData.length; columnIndex++) {
                     if (rowData[columnIndex]) {
                         text += this.colHeaders[columnIndex] + '="' + rowData[columnIndex] + '"; ';
@@ -81,6 +105,7 @@
 
                 return text;
             };
+
             this.addPendingChange = function(rowIndex, rowData) 
             {
                 if(!(rowIndex in this.pendingChanges))
@@ -88,6 +113,15 @@
                     this.pendingChangeCounter ++;                    
                 }
                 this.pendingChanges[rowIndex] = rowData;                
+            };
+
+            this.addPendingDelete = function(rowIndex, rowData)
+            {
+                if(!(rowIndex in this.pendingDeletes))
+                {
+                    this.pendingDeleteCounter ++;                    
+                }
+                this.pendingDeletes[rowIndex] = rowData;             
             };
         };
 
@@ -110,13 +144,26 @@
             for(var elementIndex=0; elementIndex<elements.length; elementIndex++)
             {
                 var element = elements[elementIndex];
-                text += '\r\n' + element.id + ' (' + element.pendingChangeCounter + ')' + ":\r\n";
+                text += '\r\n' + element.typeId + ' (' + element.pendingChangeCounter + ')' + ":\r\n";
                 for(var rowIndex in element.pendingChanges)
                 {
                     var rowData = element.pendingChanges[rowIndex];
                     text += element.getRowDataAsText(rowData) + "\r\n";
                 }
             }
+
+            var text = "Pending deletes:\r\n";
+            for(var elementIndex=0; elementIndex<elements.length; elementIndex++)
+            {
+                var element = elements[elementIndex];
+                text += '\r\n' + element.typeId + ' (' + element.pendingDeleteCounter + ')' + ":\r\n";
+                for(var rowIndex in element.pendingChanges)
+                {
+                    var rowData = element.pendingDeletes[rowIndex];
+                    text += element.getRowDataAsText(rowData) + "\r\n";
+                }
+            }
+
             pendingChangesDiv.innerText = text;
         }
 
@@ -126,7 +173,6 @@
         Handsontable.Dom.addEvent(save, 'click', function () {
 
             var data = getDataToSend();
-            console.log(JSON.stringify( data ));
 
             // save all cell's data
             $.ajax({
@@ -150,19 +196,36 @@
         **/
         function getDataToSend()
         {
-            var data = {};
+            var data = {
+                toInsertOrUpdate: {},
+                toRemove: {}
+            };
+
             for(var elementIndex=0; elementIndex<elements.length; elementIndex++)
             {
                 var element = elements[elementIndex];
-                var changes = [];
+                
+                // pending 'insert or update':
+                var pendingChanges = [];
                 var changeCount = 0;
                 for(var rowIndex in element.pendingChanges)
                 {                    
-                    changes[changeCount]=element.pendingChanges[rowIndex];
+                    pendingChanges[changeCount]=element.pendingChanges[rowIndex];
                     changeCount++;
                 }
-                data[element.id] = changes;
+                data.toInsertOrUpdate[element.typeId] = pendingChanges;
+
+                // pending 'delete':
+                var pendingDeletes = [];
+                var deleteCount = 0;
+                for(var rowIndex in element.pendingDeletes)
+                {                    
+                    pendingDeletes[deleteCount]=element.pendingDeletes[rowIndex];
+                    deleteCount++;
+                }
+                data.toRemove[element.typeId] = pendingDeletes;
             }
+
             return data;
         }
 
