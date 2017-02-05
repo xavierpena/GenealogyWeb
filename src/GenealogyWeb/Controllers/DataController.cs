@@ -164,6 +164,62 @@ namespace GenealogyWeb.Controllers
             return View();
         }
 
+        public ActionResult PersonById(int personId)
+        {
+            var person = _personRepository.GetById(personId);
+            return Person(person);
+        }
+
+        public ActionResult Person(Persona person)
+        {
+            if (!ModelState.IsValid)
+                return View("Person", person);
+
+            return View("Person", person);            
+        }
+
+        public ActionResult MarriageByPersonId(int personId)
+        {
+            var marriagesByHusband = _marriageRepository.GetAllByHusbandId(personId);
+            if(marriagesByHusband.Any())
+            {
+                if (marriagesByHusband.Count() == 1)
+                    return Marriage(marriagesByHusband.Single());
+                else
+                    return BadRequest("More than one marriage");
+            }
+            else
+            {
+                var marriagesByWife = _marriageRepository.GetAllByWifeId(personId);
+                if (marriagesByWife.Any())
+                {
+                    if (marriagesByWife.Count() == 1)
+                        return Marriage(marriagesByWife.Single());
+                    else
+                        return BadRequest("More than one marriage");
+                }
+                else
+                {
+                    return BadRequest("No marriages assigned");
+                }
+            }
+            
+        }
+
+        public ActionResult MarriageById(int marriageId)
+        {
+            var marriage = _marriageRepository.GetById(marriageId);
+            return Marriage(marriage);
+        }
+
+        public ActionResult Marriage(Matrimoni marriage)
+        {
+            if (!ModelState.IsValid)
+                return View("Marriage", marriage);
+
+            return View("Marriage", marriage);
+        }
+
     }
 
     public class DataToSaveModel

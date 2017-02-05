@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,8 +11,11 @@ namespace GenealogyWeb.Core.Models
         public int? id { get; set; }
         public int? home_id { get; set; }
         public int? dona_id { get; set; }
+        [Display(Name = "Place")]
         public string data { get; set; }
+        [Display(Name = "Date (yyyy-MM-dd)")]
         public string lloc { get; set; }
+        [Display(Name = "Observations")]
         public string observacions { get; set; }
 
         // ===

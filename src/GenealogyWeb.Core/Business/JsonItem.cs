@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GenealogyWeb.Core.Business.UpwardTree
+namespace GenealogyWeb.Core.Business
 {
     public class JsonItem
     {
@@ -22,7 +22,7 @@ namespace GenealogyWeb.Core.Business.UpwardTree
         /// </summary>
         public JsonItem(JsonItem item)
         {
-            this.name = "[ ⚠ DUPLICATE ] " + item.name;
+            this.name = Utils.GetDuplicateStr(item.name);
         }
 
         public void AddChild(JsonItem jsonItem)

@@ -20,8 +20,8 @@ namespace GenealogyWeb.Core.Sandbox
 
         public void Process()
         {
-            //var test = _downwardTreeBuilder.GetResult();
-            var test = _upwardTreeBuilder.GetResult(1);
+            var test = _downwardTreeBuilder.GetResult();
+            //var test = _upwardTreeBuilder.GetResult(1);
         }
     }
 }

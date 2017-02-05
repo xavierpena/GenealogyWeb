@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace GenealogyWeb.Core.Models
         public int? id { get; set; }
         public int matrimoni_id { get; set; }
         public int persona_id { get; set; }
+        [Display(Name = "Observations")]
         public string observacions { get; set; }
 
         public object GetSearchKey()

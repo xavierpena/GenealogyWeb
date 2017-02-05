@@ -22,7 +22,7 @@ namespace GenealogyWeb.Core.Business.DownwardTree
         private List<Matrimoni> _marriages;
         private List<Fill> _sons;
 
-        private Dictionary<Persona, PersonNode> _processed;
+        private Dictionary<Persona, JsonItem> _processed;
 
         public DownwardTreeBuilder(
             PersonaRepository personRepository,
@@ -36,7 +36,7 @@ namespace GenealogyWeb.Core.Business.DownwardTree
 
         private void Init()
         {
-            _processed = new Dictionary<Persona, PersonNode>();
+            _processed = new Dictionary<Persona, JsonItem>();
 
             _persons = _personRepository.GetAll().ToList();
             _marriages = _marriageRepository.GetAll().ToList();
@@ -44,19 +44,22 @@ namespace GenealogyWeb.Core.Business.DownwardTree
         }
 
         // https://github.com/ErikGartner/dTree
-        public List<PersonNode> GetResult()
+        public JsonItem GetResult()
         {
             Init();
 
             var topLevelPersonIds = GetTopLevelPersonIds();
-            var topLevelPersonNodes = new List<PersonNode>();
+            var topLevelPersonNodes = new List<JsonItem>();
             foreach (var id in topLevelPersonIds)
             {
                 var person = _persons.Where(x => x.id == id).Single();
                 topLevelPersonNodes.Add(GetDeepNode(person));
             }
 
-            return topLevelPersonNodes;
+            var topNode = new JsonItem("results");
+            topNode.AddChildren(topLevelPersonNodes.ToArray());
+
+            return topNode;
         }
 
         private List<int?> GetTopLevelPersonIds()
@@ -92,24 +95,20 @@ namespace GenealogyWeb.Core.Business.DownwardTree
                 .ToList();
         }
 
-        public List<PersonNode> GetResult(int personId)
+        public JsonItem GetResult(int personId)
         {
             Init();
             var person = _persons.Where(x => x.id == personId).Single();
             var personNode = GetDeepNode(person);
-            return new List<PersonNode> { personNode };
+            return personNode;
         }
 
-        private PersonNode GetDeepNode(Persona person)
+        private JsonItem GetDeepNode(Persona person)
         {
             if (_processed.ContainsKey(person))
-                return new PersonNode(_processed[person]);
+                return new JsonItem(_processed[person]);
 
-            var personNode = new PersonNode
-            {
-                name = GetPersonDescription(person),
-                @class = person.home ? "man" : "woman",
-            };
+            var personNode = new JsonItem(Utils.GetPersonDescription(person));
 
             _processed.Add(person, personNode);
 
@@ -119,86 +118,56 @@ namespace GenealogyWeb.Core.Business.DownwardTree
 
             foreach(var marriage in marriages)
             {
-                var partnerNode = GetPartnerNode(person, marriage);
+                var marriageNode = GetMarriageNode(person, marriage);
+                
                 var childrenNodes = GetChildrenNodes(marriage);
+                if (childrenNodes != null)
+                    marriageNode.AddChildren(childrenNodes.ToArray());
 
-                if (partnerNode != null && childrenNodes != null)
-                {
-                    var marriageNode = new MarriageNode
-                    {
-                        spouse = partnerNode,
-                        children = childrenNodes
-                    };
-
-                    personNode.AddMarriage(marriageNode);
-                }
+                personNode.AddChildren(marriageNode);                
             }
 
             return personNode;
         }
 
-        private PersonNode GetPartnerNode(Persona person, Matrimoni marriage)
+        private JsonItem GetMarriageNode(Persona person, Matrimoni marriage)
         {
+            var marriageStr = Utils.GetMarriageDescription(marriage);
+
             var partnerId = (marriage.home_id == person.id) ? marriage.dona_id : marriage.home_id;
             var partner = _persons.Where(x => x.id == partnerId).SingleOrDefault();
-            var partnerNode = default(PersonNode);
+            var partnerNode = default(JsonItem);
             if (partner != null)
             {
                 if (_processed.ContainsKey(partner))
-                {
-                    partnerNode = new PersonNode(_processed[partner]); ;
-                }
+                    partnerNode = new JsonItem(GetFullMarriageDescription(marriageStr, Utils.GetDuplicateStr(partner)));
                 else
-                {
-                    partnerNode = new PersonNode
-                    {
-                        name = GetPersonDescription(partner),
-                        @class = partner.home ? "man" : "woman",
-                    };
-                }
+                    partnerNode = new JsonItem(GetFullMarriageDescription(marriageStr, Utils.GetPersonDescription(partner)));
             }
             else
             {
-                partnerNode = new PersonNode
-                {
-                    name = "(unknown)",
-                    @class = "unknown",
-                };
+                partnerNode = new JsonItem(GetFullMarriageDescription(marriageStr, "(unknown)"));
             }
 
             return partnerNode;
         }
 
-        private string GetPersonDescription(Persona person)
-            => $"{GetStr(person.nom)}/{GetStr(person.llinatge_1)}/{GetStr(person.llinatge_2)} ({GetStr(person.naixement_data) }=>{GetStr(person.mort_data)}) id={person.id}";
+        private string GetFullMarriageDescription(string marriageStr, string partnerStr)
+            => $"{marriageStr} w/ {partnerStr}";
 
-        private string GetStr(string inputStr)
+        private List<JsonItem> GetChildrenNodes(Matrimoni marriage)
         {
-            var unknownStr = "✗";
-
-            if (inputStr == null)
-                return unknownStr;
-
-            inputStr = inputStr.Trim();
-            if (inputStr == "")
-                return unknownStr;
-
-            return inputStr;
-        }
-
-        private List<PersonNode> GetChildrenNodes(Matrimoni marriage)
-        {
-            var childrenNodes = default(List<PersonNode>);
+            var childrenNodes = default(List<JsonItem>);
             var sons = _sons.Where(x => x.matrimoni_id == marriage.id).ToList();
             if (sons.Any())
             {
-                childrenNodes = new List<PersonNode>();
+                childrenNodes = new List<JsonItem>();
                 foreach (var son in sons)
                 {
                     var sonPerson = _persons.Where(x => x.id == son.persona_id).Single();
-                    var sonNode = default(PersonNode);
+                    var sonNode = default(JsonItem);
                     if (_processed.ContainsKey(sonPerson))
-                        sonNode = new PersonNode(_processed[sonPerson]);
+                        sonNode = new JsonItem(_processed[sonPerson]);
                     else
                         sonNode = GetDeepNode(sonPerson);
                     childrenNodes.Add(sonNode);

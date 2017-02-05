@@ -24,3 +24,11 @@ http://www.hanselman.com/blog/PublishingAnASPNETCoreWebsiteToACheapLinuxVMHost.a
 
 > ASP.NET Core Multi-tenancy: Data Isolation with Entity Framework
 http://benfoster.io/blog/aspnet-core-multi-tenancy-data-isolation-with-entity-framework
+
+---
+
+reddit: reliable cheap linux VPS hosts in europe
+https://www.reddit.com/r/linux/comments/57ftou/where_do_i_find_reliable_cheap_linux_vps_hosts_in/
+
+Suggestion:
+https://www.ovh.es/vps/

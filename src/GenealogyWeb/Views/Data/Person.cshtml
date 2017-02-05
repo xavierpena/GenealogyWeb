@@ -1,0 +1,57 @@
+﻿@model GenealogyWeb.Core.Models.Persona
+
+@using (Html.BeginForm("Person", "Data"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.nom)
+        @Html.TextBoxFor(m => m.nom, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.nom)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.llinatge_1)
+        @Html.TextBoxFor(m => m.llinatge_1, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.llinatge_1)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.llinatge_2)
+        @Html.TextBoxFor(m => m.llinatge_2, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.llinatge_2)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.home)
+        @Html.CheckBoxFor(m => m.home, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.home)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.naixement_data)
+        @Html.TextBoxFor(m => m.naixement_data, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.naixement_data)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.naixement_lloc)
+        @Html.TextBoxFor(m => m.naixement_lloc, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.naixement_lloc)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.mort_data)
+        @Html.TextBoxFor(m => m.mort_data, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.mort_data)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.mort_lloc)
+        @Html.TextBoxFor(m => m.mort_lloc, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.mort_lloc)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.info)
+        @Html.TextBoxFor(m => m.info, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.info)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.observacions)
+        @Html.TextAreaFor(m => m.observacions, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.observacions)
+    </div>
+
+    <button type="submit">Save</button>
+}

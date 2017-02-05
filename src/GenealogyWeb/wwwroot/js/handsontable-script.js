@@ -1,4 +1,4 @@
-﻿function handsontableScript(element, visualizePendingChanges)
+﻿function handsontableScript(element, visualizePendingChanges, handsontableObj)
 {
     // DOM elements:
     var
@@ -7,7 +7,6 @@
       searchResult = document.getElementById("search_result_" + element.typeId);
     
     // Other global variables:
-    var handsontableObj;
     var searchResultCount = 0;
 
     // pending changes contains rowIndex as key, and rowData as value:
@@ -48,7 +47,8 @@
                 {
                     addedRowIndexes.push(rowIndex);
                     var rowData = handsontableObj.getSourceDataAtRow(rowIndex);
-                    var rowHtml = element.getRowAsHtmlResultItem(rowData);
+                    
+                    var rowHtml = element.getRowAsHtmlResultItem(rowIndex, rowData);
                     text += rowHtml;
                 }
             }
@@ -75,7 +75,6 @@
         var rowIndex = changes[0][0];
         var rowData = handsontableObj.getSourceDataAtRow(rowIndex);
         element.addPendingChange(rowIndex, rowData);
-        visualizePendingChanges();
     });
 
 }

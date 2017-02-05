@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,27 +9,25 @@ namespace GenealogyWeb.Core.Models
     public class Persona
     {
         public int? id { get; set; }
-        public string generacio { get; set; }
-        public string id_6 { get; set; }
-        public string id_5 { get; set; }
-        public string id_4 { get; set; }
-        public string id_3 { get; set; }
-        public string id_2 { get; set; }
-        public string id_1 { get; set; }
+        [Display(Name = "Is male?")]
         public bool home { get; set; }
+        [Display(Name = "First name")]
         public string nom { get; set; }
+        [Display(Name = "Father's surname")]
         public string llinatge_1 { get; set; }
+        [Display(Name = "Mothers's surname")]
         public string llinatge_2 { get; set; }
+        [Display(Name = "Birth date (yyyy-MM-dd)")]
         public string naixement_data { get; set; }
+        [Display(Name = "Birth place")]
         public string naixement_lloc { get; set; }
-        public string matrimoni_data { get; set; }
-        public string matrimoni_edat { get; set; }
-        public string matrimoni_lloc { get; set; }
-        public string fills_nombre { get; set; }
+        [Display(Name = "Death date (yyyy-MM-dd)")]
         public string mort_data { get; set; }
-        public string mort_edat { get; set; }
+        [Display(Name = "Death place")]
         public string mort_lloc { get; set; }
+        [Display(Name = "Info")]
         public string info { get; set; }
+        [Display(Name = "Observations")]
         public string observacions { get; set; }
 
         // ===
