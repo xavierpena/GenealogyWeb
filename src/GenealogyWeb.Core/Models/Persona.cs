@@ -8,6 +8,7 @@ namespace GenealogyWeb.Core.Models
 {
     public class Persona
     {
+        [Display(Name = "ID")]
         public int? id { get; set; }
         [Display(Name = "Is male?")]
         public bool home { get; set; }
@@ -29,6 +30,8 @@ namespace GenealogyWeb.Core.Models
         public string info { get; set; }
         [Display(Name = "Observations")]
         public string observacions { get; set; }
+
+        public string FullName { get { return $"{nom}/{llinatge_1}/{llinatge_2}"; } }
 
         // ===
 

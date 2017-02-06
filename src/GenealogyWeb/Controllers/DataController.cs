@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -214,6 +215,20 @@ namespace GenealogyWeb.Controllers
 
         public ActionResult Marriage(Matrimoni marriage)
         {
+            var persons = _personRepository.GetAll();
+
+            ViewBag.men = persons
+                .Where(x => x.home)
+                .Select(x => new SelectListItem { Text = x.FullName, Value = x.id.ToString() })
+                .OrderBy(x => x.Text)
+                .ToList();
+
+            ViewBag.women = persons
+                .Where(x => !x.home)
+                .Select(x => new SelectListItem { Text = x.FullName, Value = x.id.ToString() })
+                .OrderBy(x => x.Text)
+                .ToList();
+
             if (!ModelState.IsValid)
                 return View("Marriage", marriage);
 

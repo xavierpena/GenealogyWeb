@@ -1,7 +1,14 @@
 ﻿@model GenealogyWeb.Core.Models.Persona
 
+<h1>Data</h1>
+
 @using (Html.BeginForm("Person", "Data"))
 {
+    <div class="form-group">
+        @Html.LabelFor(m => m.id)
+        @Html.TextBoxFor(m => m.id, new { @class = "form-control", @readonly = "readonly" })
+        @Html.ValidationMessageFor(m => m.id)
+    </div>
     <div class="form-group">
         @Html.LabelFor(m => m.nom)
         @Html.TextBoxFor(m => m.nom, new { @class = "form-control" })
@@ -19,7 +26,7 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.home)
-        @Html.CheckBoxFor(m => m.home, new { @class = "form-control" })
+        @Html.CheckBoxFor(m => m.home)
         @Html.ValidationMessageFor(m => m.home)
     </div>
     <div class="form-group">
@@ -55,3 +62,36 @@
 
     <button type="submit">Save</button>
 }
+
+@{
+    var onclick1 = "'/data/persondownwardtree?personId=" + Model.id + "'";
+    var link1 = "<a href=\"#\" onclick=\"return popitup(" + onclick1 + ")\">downward tree</a>";
+
+    var onclick2 = "'/data/upwardtree?personId=" + Model.id + "'";
+    var link2 = "<a href=\"#\" onclick=\"return popitup(" + onclick2 + ")\">upward tree</a>";
+
+    //var onclick3 = "'/data/personById?personId=" + Model.id + "'";
+    //var link3 = "<a href=\"#\" onclick=\"return popitup(" + onclick3 + ")\">edit person</a>";
+
+    var onclick3 = "'/data/marriageByPersonId?personId=" + Model.id + "'";
+    var link3 = "<a href=\"#\" onclick=\"return popitup(" + onclick3 + ")\">edit marriage</a>";
+}
+
+<hr/>
+
+<h1>Features</h1>
+
+<div>
+@Html.Raw(@link1) | @Html.Raw(@link2) | @Html.Raw(@link3)
+</div>
+
+<script>
+    /**
+    * Shows the destination url in a new window.
+    **/
+    function popitup(url) {
+        newwindow=window.open(url,'name','height=800,width=1200');
+        if (window.focus) {newwindow.focus()}
+        return false;
+    }
+</script>

@@ -9,11 +9,13 @@ namespace GenealogyWeb.Core.Models
     public class Matrimoni
     {
         public int? id { get; set; }
+        [Display(Name = "Husband")]
         public int? home_id { get; set; }
+        [Display(Name = "Wife")]
         public int? dona_id { get; set; }
-        [Display(Name = "Place")]
+        [Display(Name = "Date (yyyy-MM-dd)")]        
         public string data { get; set; }
-        [Display(Name = "Date (yyyy-MM-dd)")]
+        [Display(Name = "Place")]
         public string lloc { get; set; }
         [Display(Name = "Observations")]
         public string observacions { get; set; }

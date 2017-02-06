@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 namespace GenealogyWeb.Core.Models
 {
     public class Fill
-    {
+    {        
         public int? id { get; set; }
+        [Display(Name = "Marriage")]
         public int matrimoni_id { get; set; }
+        [Display(Name = "Son")]
         public int persona_id { get; set; }
         [Display(Name = "Observations")]
         public string observacions { get; set; }
