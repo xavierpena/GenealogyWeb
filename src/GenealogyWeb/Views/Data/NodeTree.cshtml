@@ -1,0 +1,24 @@
+﻿@{
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+</head>
+<body>
+    <h1>@ViewData["Title"]</h1>
+    <div id="tree-container"></div>
+</body>
+</html>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<link rel="stylesheet" href="~/css/nodeTree.css" />
+
+<script>
+    var treeData = @ViewData["json"];
+</script>
+
+<script src="~/js/nodeTree.js"></script>

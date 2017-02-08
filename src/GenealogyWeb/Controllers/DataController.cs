@@ -111,6 +111,29 @@ namespace GenealogyWeb.Controllers
             
         }
 
+        public IActionResult Persons()
+        {
+            var persons = _personRepository.GetAll();
+
+            ViewBag.persons = persons
+                .Select(x => new SelectListItem { Text = x.FullName, Value = x.id.ToString() })
+                .OrderBy(x => x.Text)
+                .ToList();
+
+            var result = _downwardTreeBuilder.GetResult();
+            var json = JsonConvert.SerializeObject(
+                            result,
+                            Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore
+                            });
+            var encodedJson = new HtmlString(json);
+            ViewBag.json = encodedJson;
+
+            return View();
+        }
+
         public JsonResult Save([FromBody] DataToSaveModel dataToSaveModel)
         {
             dataToSaveModel.Parse();            
@@ -130,7 +153,7 @@ namespace GenealogyWeb.Controllers
             var encodedJson = new HtmlString(json);
             ViewData["Title"] = "Tree";
             ViewData["json"] = encodedJson;
-            return View("UpwardTree");
+            return View("NodeTree");
         }
 
         public IActionResult PersonDownwardTree(int personId)
@@ -146,10 +169,10 @@ namespace GenealogyWeb.Controllers
             var encodedJson = new HtmlString(json);
             ViewData["Title"] = "Tree";
             ViewData["json"] = encodedJson;
-            return View("UpwardTree");
+            return View("NodeTree");
         }
 
-        public IActionResult UpwardTree(int personId)
+        public IActionResult PersonUpwardTree(int personId)
         {
             var result = _upwardTreeBuilder.GetResult(personId);
             var json = JsonConvert.SerializeObject(
@@ -162,7 +185,7 @@ namespace GenealogyWeb.Controllers
             var encodedJson = new HtmlString(json);
             ViewData["Title"] = "Tree";
             ViewData["json"] = encodedJson;
-            return View();
+            return View("NodeTree");
         }
 
         public ActionResult PersonById(int personId)

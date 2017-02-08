@@ -1,6 +1,20 @@
-﻿@model GenealogyWeb.Core.Models.Persona
+﻿@using GenealogyWeb.Views
 
-<h1>Data</h1>
+@model GenealogyWeb.Core.Models.Persona
+
+<br/>
+
+<div>
+    @Html.Raw(Utils.GetShowDownwardTreeLink(Model.id.Value)) | @Html.Raw(Utils.GetShowUpwardTreeLink(Model.id.Value)) | @Html.Raw(Utils.GetEditMarriageLink(Model.id.Value))
+</div>
+
+<script>
+    @Html.Raw(Utils.GetPopItUpJsFunction());
+</script>
+
+
+<hr />
+
 
 @using (Html.BeginForm("Person", "Data"))
 {
@@ -62,36 +76,3 @@
 
     <button type="submit">Save</button>
 }
-
-@{
-    var onclick1 = "'/data/persondownwardtree?personId=" + Model.id + "'";
-    var link1 = "<a href=\"#\" onclick=\"return popitup(" + onclick1 + ")\">downward tree</a>";
-
-    var onclick2 = "'/data/upwardtree?personId=" + Model.id + "'";
-    var link2 = "<a href=\"#\" onclick=\"return popitup(" + onclick2 + ")\">upward tree</a>";
-
-    //var onclick3 = "'/data/personById?personId=" + Model.id + "'";
-    //var link3 = "<a href=\"#\" onclick=\"return popitup(" + onclick3 + ")\">edit person</a>";
-
-    var onclick3 = "'/data/marriageByPersonId?personId=" + Model.id + "'";
-    var link3 = "<a href=\"#\" onclick=\"return popitup(" + onclick3 + ")\">edit marriage</a>";
-}
-
-<hr/>
-
-<h1>Features</h1>
-
-<div>
-@Html.Raw(@link1) | @Html.Raw(@link2) | @Html.Raw(@link3)
-</div>
-
-<script>
-    /**
-    * Shows the destination url in a new window.
-    **/
-    function popitup(url) {
-        newwindow=window.open(url,'name','height=800,width=1200');
-        if (window.focus) {newwindow.focus()}
-        return false;
-    }
-</script>

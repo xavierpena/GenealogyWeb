@@ -1,4 +1,18 @@
-﻿@model GenealogyWeb.Core.Models.Matrimoni
+﻿@using GenealogyWeb.Views
+
+@model GenealogyWeb.Core.Models.Matrimoni
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
+<link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css" />
+<script>
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker({
+            liveSearch: true,
+            showSubtext: true
+        });
+    });
+</script>
 
 @using (Html.BeginForm("Marriage", "Data"))
 {
@@ -47,15 +61,3 @@
 
     <button type="submit">Save</button>
 }
-
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
-<link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css" />
-<script>
-    $(document).ready(function () {
-        $('.selectpicker').selectpicker({
-            liveSearch: true,
-            showSubtext: true
-        });
-    });
-</script>
