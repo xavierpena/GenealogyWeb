@@ -31,7 +31,7 @@ namespace GenealogyWeb.Core.Models
         [Display(Name = "Observations")]
         public string observacions { get; set; }
 
-        public string FullName { get { return $"{nom}/{llinatge_1}/{llinatge_2}"; } }
+        public string FullName { get { return $"{nom}/{llinatge_1}/{llinatge_2} (id={id})"; } }
 
         // ===
 
