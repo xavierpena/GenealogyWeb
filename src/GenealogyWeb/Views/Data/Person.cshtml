@@ -4,13 +4,23 @@
 
 <br/>
 
-<div>
-    @Html.Raw(Utils.GetShowDownwardTreeLink(Model.id.Value)) | @Html.Raw(Utils.GetShowUpwardTreeLink(Model.id.Value)) | @Html.Raw(Utils.GetEditMarriageLink(Model.id.Value))
-</div>
-
-<script>
-    @Html.Raw(Utils.GetPopItUpJsFunction());
-</script>
+@{
+    if (Model.id.HasValue)
+    {
+        <div>
+            @Html.ActionLink("✗ delete person", "deletePerson", new { id = Model.id })
+            | @Html.ActionLink("✎ edit marriage", "marriageByPersonId", new { id = Model.id })
+            | @Html.ActionLink("🡓 show downward tree", "persondownwardtree", new { id = Model.id })
+            | @Html.ActionLink("🡑 show upward tree", "personupwardtree", new { id = Model.id })
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <strong>Info:</strong> create a new person.
+        </div>
+    }
+}
 
 
 <hr />

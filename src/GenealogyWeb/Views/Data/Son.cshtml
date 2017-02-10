@@ -1,6 +1,6 @@
 ﻿@using GenealogyWeb.Views
 
-@model GenealogyWeb.Core.Models.Matrimoni
+@model GenealogyWeb.Core.Models.Fill
 
 <br />
 
@@ -17,7 +17,7 @@
     else
     {
         <div class="alert alert-info">
-            <strong>Info:</strong> create a new person.
+            <strong>Info:</strong> create a new son.
         </div>
     }
 }
@@ -34,45 +34,35 @@
     });
 </script>
 
-@using (Html.BeginForm("Marriage", "Data"))
+@using (Html.BeginForm("Son", "Data"))
 {
     <div class="form-group">
-        @Html.LabelFor(m => m.home_id)
+        @Html.LabelFor(m => m.matrimoni_id)
         @Html.DropDownListFor(
-    m => m.home_id,
-    new SelectList((List<SelectListItem>)ViewData["men"], "Value", "Text"),
-    new
-    {
-        @class = "form-control selectpicker",
-        data_show_subtext = "true",
-        data_live_search = "true"
-    }
-)
-        @Html.ValidationMessageFor(m => m.home_id)
+            m => m.matrimoni_id,
+            new SelectList((List<SelectListItem>)ViewData["marriages"], "Value", "Text"),
+            new
+            {
+                @class = "form-control selectpicker",
+                data_show_subtext = "true",
+                data_live_search = "true"
+            }
+        )
+        @Html.ValidationMessageFor(m => m.matrimoni_id)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.dona_id)
+        @Html.LabelFor(m => m.persona_id)
         @Html.DropDownListFor(
-    m => m.dona_id,
-    new SelectList((List<SelectListItem>)ViewData["women"], "Value", "Text"),
-    new
-    {
-        @class = "form-control selectpicker",
-        data_show_subtext = "true",
-        data_live_search = "true"
-    }
-)
-        @Html.ValidationMessageFor(m => m.home_id)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.lloc)
-        @Html.TextBoxFor(m => m.lloc, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.lloc)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.data)
-        @Html.TextBoxFor(m => m.data, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.data)
+            m => m.persona_id,
+            new SelectList((List<SelectListItem>)ViewData["persons"], "Value", "Text"),
+            new
+            {
+                @class = "form-control selectpicker",
+                data_show_subtext = "true",
+                data_live_search = "true"
+            }
+        )
+        @Html.ValidationMessageFor(m => m.persona_id)
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.observacions)

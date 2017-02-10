@@ -1,4 +1,86 @@
-﻿function handsontableScript(element, visualizePendingChanges, handsontableObj)
+﻿document.addEventListener("DOMContentLoaded", function () {
+
+    var personsKey = 'persons';
+    var marriagesKey = 'marriages';
+    var sonsKey = 'sons';
+
+    elements.push(new element(personsKey, colHeaders_1, data_1));
+    elements.push(new element(marriagesKey, colHeaders_2, data_2));
+    elements.push(new element(sonsKey, colHeaders_3, data_3));
+
+    function element(typeId, colHeaders, data) {
+
+        this.typeId = typeId;
+
+        this.colHeaders = colHeaders;
+        this.data = data;
+
+        this.getRowAsHtmlResultItem = function (rowIndex, rowData) {
+
+            var text = this.getRowDataAsText(rowData);
+            var elementId = rowData[1];
+
+            if (this.typeId == personsKey)
+            {
+                var onclick1 = "'/data/persondownwardtree?id=" + elementId + "'";
+                var link1 = '<a href="#" onclick="return popitup(' + onclick1 + ')">downward tree</a>';
+
+                var onclick2 = "'/data/personupwardtree?id=" + elementId + "'";
+                var link2 = '<a href="#" onclick="return popitup(' + onclick2 + ')">upwward tree</a>';
+
+                var onclick3 = "'/data/personById?id=" + elementId + "'";
+                var link3 = '<a href="#" onclick="return popitup(' + onclick3 + ')">edit person</a>';
+
+                var onclick4 = "'/data/marriageByPersonId?id=" + elementId + "'";
+                var link4 = '<a href="#" onclick="return popitup(' + onclick4 + ')">edit marriage</a>';
+
+                var linkHtml = '<div>' + link1 + ' | ' + link2 + ' | ' + link3 + ' | ' + link4 + '|' + text + '</div>';
+                return linkHtml;
+            }
+            if (this.typeId == marriagesKey)
+            {
+                var onclick1 = "'/data/marriageById?id=" + elementId + "'";
+                var link1 = '<a href="#" onclick="return popitup(' + onclick3 + ')">edit</a>';
+
+                var linkHtml = '<div>' + link1 + '|' + text + '</div>';
+                return linkHtml;
+            }
+            if (this.typeId == sonsKey)
+            {
+
+                var onclick1 = "'/data/sonById?id=" + elementId + "'";
+                var link1 = '<a href="#" onclick="return popitup(' + onclick3 + ')">edit</a>';
+
+                var linkHtml = '<div>' + link1 + '|' + text + '</div>';
+                return linkHtml;
+            }
+            else
+            {
+                throw 'unknwon type';
+            }
+
+        };
+
+        this.getRowDataAsText = function (rowData) {
+            var text = '{ ';
+            for (var columnIndex = 0; columnIndex < rowData.length; columnIndex++) {
+                if (rowData[columnIndex]) {
+                    text += this.colHeaders[columnIndex] + '="' + rowData[columnIndex] + '"; ';
+                }
+            }
+            text += '}';
+
+            return text;
+        };
+    };
+
+    handsontableScript(elements[0]);
+    handsontableScript(elements[1]);
+    handsontableScript(elements[2]);
+
+});
+
+function handsontableScript(element, handsontableObj)
 {
     // DOM elements:
     var
@@ -8,9 +90,6 @@
     
     // Other global variables:
     var searchResultCount = 0;
-
-    // pending changes contains rowIndex as key, and rowData as value:
-    var pendingChanges = new Array();
   
     /**
     * Initializes handsontable
@@ -66,15 +145,5 @@
             searchResultCount++;
         }
     }
-
-    /**
-    * On cell change. Local hook (has same effect as a callback).
-    * @param changes: 2D array containing information about each of the edited cells [[row, prop, oldVal, newVal], ...]
-    **/
-    handsontableObj.addHook('afterChange', function (changes, source) {
-        var rowIndex = changes[0][0];
-        var rowData = handsontableObj.getSourceDataAtRow(rowIndex);
-        element.addPendingChange(rowIndex, rowData);
-    });
 
 }

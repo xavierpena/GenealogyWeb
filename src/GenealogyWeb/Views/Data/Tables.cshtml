@@ -10,17 +10,7 @@
 <link rel="stylesheet" href="~/lib/handsontable/dist/handsontable.css" />
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/genealogy.js"></script>
 <script src="~/js/handsontable-script.js"></script>
-
-
-<div>
-    <a href="#" onclick="return popitup('/data/downwardtree')">Show full genealogy</a>
-</div>
-
-<button name="save" id="save" class="intext-btn">Save</button>
-<pre id="pending_changes" class="console"></pre>
-<pre id="save_result" class="console"></pre>
 
 
 <h3>@ViewData["title_1"]</h3>
@@ -60,24 +50,6 @@
         newwindow=window.open(url,'name','height=800,width=1200');
         if (window.focus) {newwindow.focus()}
         return false;
-    }
-    
-    /**
-    * Adds an row to the delete list. Finds the type of the parent element, and adds it to the element.
-    **/
-    function addToDeleteList(rowIndex, typeId) { 
-        console.log(handsontableObjects);
-        for(var elementIndex=0; elementIndex<elements.length; elementIndex++)
-        {
-            var element = elements[elementIndex];
-            if(element.typeId == typeId)
-            {
-                var handsontableObj = handsontableObjects[element.typeId];
-                var rowData = handsontableObj.getSourceDataAtRow(rowIndex);
-                element.addPendingDelete(rowIndex, rowData);
-                break;
-            }
-        }           
     }
 
     var colHeaders_1 = @ViewData["colHeaders_1"];

@@ -97,9 +97,9 @@ namespace GenealogyWeb.Controllers
             return View("NodeTree");
         }
 
-        public IActionResult PersonDownwardTree(int personId)
+        public IActionResult PersonDownwardTree(int id)
         {
-            var result = _downwardTreeBuilder.GetResult(personId);
+            var result = _downwardTreeBuilder.GetResult(id);
             var json = JsonConvert.SerializeObject(
                             result,
                             Formatting.None,
@@ -113,9 +113,9 @@ namespace GenealogyWeb.Controllers
             return View("NodeTree");
         }
 
-        public IActionResult PersonUpwardTree(int personId)
+        public IActionResult PersonUpwardTree(int id)
         {
-            var result = _upwardTreeBuilder.GetResult(personId);
+            var result = _upwardTreeBuilder.GetResult(id);
             var json = JsonConvert.SerializeObject(
                             result,
                             Formatting.None,
@@ -129,51 +129,80 @@ namespace GenealogyWeb.Controllers
             return View("NodeTree");
         }
 
-        public ActionResult PersonById(int personId)
+        public ActionResult PersonById(int id)
         {
-            var person = _personRepository.GetById(personId);
+            var person = _personRepository.GetById(id);
             return Person(person);
         }
 
         public ActionResult Person(Persona person)
         {
-            if (!ModelState.IsValid)
-                return View("Person", person);
+            //if (!ModelState.IsValid)
+            //    return View("Person", person);
+
+            //if (person == null)
+            //    person = new Persona();
 
             return View("Person", person);            
         }
 
-        public ActionResult MarriageByPersonId(int personId)
+        public ActionResult MarriageByPersonId(int id)
         {
-            var marriagesByHusband = _marriageRepository.GetAllByHusbandId(personId);
-            if(marriagesByHusband.Any())
+            var person = _personRepository.GetById(id);
+            if(person.home)
             {
-                if (marriagesByHusband.Count() == 1)
-                    return Marriage(marriagesByHusband.Single());
+                // MAN:
+                var marriagesByHusband = _marriageRepository.GetAllByHusbandId(id);
+                if (marriagesByHusband.Any())
+                {
+                    if (marriagesByHusband.Count() == 1)
+                        return Marriage(marriagesByHusband.Single());
+                    else
+                        return BadRequest("Error: more than one marriage");
+                }
                 else
-                    return BadRequest("More than one marriage");
+                {
+                    return Marriage(new Matrimoni { home_id = id });
+                }
             }
             else
             {
-                var marriagesByWife = _marriageRepository.GetAllByWifeId(personId);
+                // WOMAN:
+                var marriagesByWife = _marriageRepository.GetAllByWifeId(id);
                 if (marriagesByWife.Any())
                 {
                     if (marriagesByWife.Count() == 1)
                         return Marriage(marriagesByWife.Single());
                     else
-                        return BadRequest("More than one marriage");
+                        return BadRequest("Error: more than one marriage");
                 }
                 else
                 {
-                    return BadRequest("No marriages assigned");
+                    return Marriage(new Matrimoni { dona_id = id });
                 }
-            }
-            
+            }            
         }
 
-        public ActionResult MarriageById(int marriageId)
+        public ActionResult SonById(int id)
         {
-            var marriage = _marriageRepository.GetById(marriageId);
+            var son = _sonRepository.GetById(id);
+            return Son(son);
+        }
+
+        public ActionResult Son(Fill son)
+        {
+            var persons = _personRepository.GetAll();
+            var marriages = _marriageRepository.GetAll();
+
+            ViewBag.persons = Utils.GetPersonsSelectList(persons);           
+            ViewBag.marriages = Utils.GetMarriagesSelectList(marriages, persons);
+
+            return View(son);
+        }
+        
+        public ActionResult MarriageById(int id)
+        {
+            var marriage = _marriageRepository.GetById(id);
             return Marriage(marriage);
         }
 
@@ -181,29 +210,16 @@ namespace GenealogyWeb.Controllers
         {
             var persons = _personRepository.GetAll();
 
-            ViewBag.men = persons
-                .Where(x => x.home)
-                .Select(x => new SelectListItem { Text = x.FullName, Value = x.id.ToString() })
-                .OrderBy(x => x.Text)
-                .ToList();
+            ViewBag.men = Utils.GetPersonsSelectListByGender(persons, isMale: true);
+            ViewBag.women = Utils.GetPersonsSelectListByGender(persons, isMale: false);
 
-            ViewBag.women = persons
-                .Where(x => !x.home)
-                .Select(x => new SelectListItem { Text = x.FullName, Value = x.id.ToString() })
-                .OrderBy(x => x.Text)
-                .ToList();
-
-            if (!ModelState.IsValid)
-                return View("Marriage", marriage);
+            //if (!ModelState.IsValid)
+            //    return View("Marriage", marriage);
 
             return View("Marriage", marriage);
         }
 
-
-
-
-
-        public IActionResult Table()
+        public IActionResult Tables()
         {
             // Tutorial: handsontable load & save
             // http://docs.handsontable.com/0.17.0/tutorial-load-and-save.html
@@ -219,7 +235,7 @@ namespace GenealogyWeb.Controllers
             //}
             //return RedirectToAction(nameof(HomeController.Index), "Home");
 
-            ViewData["Title"] = "Genealogia";
+            ViewData["Title"] = "Full overview";
 
             var persons = _personRepository.GetAll();
             var marriages = _marriageRepository.GetAll();
@@ -236,19 +252,19 @@ namespace GenealogyWeb.Controllers
 
             // Persons:
             var personesRows = persons.Select(x => $"[\"{x.GetSearchKey()}\",\"{x.id}\",\"{x.nom}\",\"{x.llinatge_1}\",\"{x.llinatge_2}\",\"{x.home}\",\"{x.naixement_lloc}\",\"{x.naixement_data}\",\"{x.mort_lloc}\",\"{x.mort_data}\",\"{x.info}\",\"{x.observacions}\"]");
-            ViewData["title_1"] = "Persones";
+            ViewData["title_1"] = "Persons";
             ViewData["data_1"] = new HtmlString("[" + string.Join(",", personesRows) + "]");
             ViewData["colHeaders_1"] = new HtmlString($"[\"search_key\",\"id\",\"nom\",\"llinatge_1\",\"llinatge_2\",\"home\",\"naixement_lloc\",\"naixement_data\",\"mort_lloc\",\"mort_data\",\"info\",\"observacions\"]");
 
             // Marriages:                 
             var matrimonisRows = marriages.Select(x => $"[\"{ searchKeyPerMarriage[x] }\",\"{x.id}\",\"{x.home_id}\",\"{x.dona_id}\",\"{x.lloc}\",\"{x.data}\",\"{x.observacions}\"]");
-            ViewData["title_2"] = "Matrimonis";
+            ViewData["title_2"] = "Marriages";
             ViewData["data_2"] = new HtmlString("[" + string.Join(",", matrimonisRows) + "]");
             ViewData["colHeaders_2"] = new HtmlString($"[\"search_key\",\"id\",\"home_id\",\"dona_id\",\"lloc\",\"data\",\"observacions\"]");
 
             // Sons:                    
             var fillsRows = sons.Select(x => $"[\"{searchKeyPerSon[x]}\",\"{x.id}\",\"{x.matrimoni_id}\",\"{x.persona_id}\",\"{x.observacions}\"]");
-            ViewData["title_3"] = "Fills";
+            ViewData["title_3"] = "Sons";
             ViewData["data_3"] = new HtmlString("[" + string.Join(",", fillsRows) + "]");
             ViewData["colHeaders_3"] = new HtmlString($"[\"search_key\",\"id\",\"matrimoni_id\",\"persona_id\",\"observacions\"]");
 
@@ -256,55 +272,6 @@ namespace GenealogyWeb.Controllers
 
         }
 
-        public JsonResult Save([FromBody] DataToSaveModel dataToSaveModel)
-        {
-            dataToSaveModel.Parse();
-            return new JsonResult("ok");
-        }
-
     }
 
-    public class DataToSaveModel
-    {
-        public PendingItemsModel toInsertOrUpdate { get; set; }
-        public PendingItemsModel toRemove { get; set; }        
-
-        public ParsedItems ParsedInsertOrUpdates { get; set; }
-        public ParsedItems ParsedRemoves { get; set; }
-
-        public void Parse()
-        {
-            this.ParsedInsertOrUpdates = new ParsedItems(this.toInsertOrUpdate);
-            this.ParsedRemoves = new ParsedItems(this.toRemove);
-        }
-    }
-
-    public class ParsedItems
-    {
-        public List<Persona> Persons { get; set; }
-        public List<Matrimoni> Marriages { get; set; }
-        public List<Fill> Sons { get; set; }
-
-        public ParsedItems(PendingItemsModel pendingItemsModel)
-        {
-            this.Persons = pendingItemsModel.persons?
-                .Select(x => Persona.PersonaFromArray(x.Skip(1).ToArray()))
-                .ToList();
-
-            this.Marriages = pendingItemsModel.marriages?
-                .Select(x => Matrimoni.MatrimoniFromArray(x.Skip(1).ToArray()))
-                .ToList();
-
-            this.Sons = pendingItemsModel.sons?
-                .Select(x => Fill.FillFromArray(x.Skip(1).ToArray()))
-                .ToList();
-        }
-    }
-
-    public class PendingItemsModel
-    {
-        public List<List<string>> persons { get; set; }
-        public List<List<string>> marriages { get; set; }
-        public List<List<string>> sons { get; set; }
-    }
 }
