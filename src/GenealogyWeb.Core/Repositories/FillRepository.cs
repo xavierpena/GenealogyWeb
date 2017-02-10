@@ -24,7 +24,14 @@ namespace GenealogyWeb.Core.Repositories
         public Fill GetById(int id)
             => _db.Query<Fill>($"SELECT * FROM {TableName} WHERE {nameof(Fill.id)}={id}").FirstOrDefault();
 
+        public int RemoveById(int id)
+            => _db.Execute($"DELETE FROM {TableName} WHERE {nameof(Fill.id)}={id}");
+
         public IEnumerable<Fill> GetAllByMarriageId(int id)
             => _db.Query<Fill>($"SELECT * FROM {TableName} WHERE {nameof(Fill.matrimoni_id)}={id}");
+
+        public Fill GetByPersonId(int id)
+            => _db.Query<Fill>($"SELECT * FROM {TableName} WHERE {nameof(Fill.persona_id)}={id}")
+            .FirstOrDefault();
     }
 }

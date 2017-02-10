@@ -24,6 +24,9 @@ namespace GenealogyWeb.Core.Repositories
         public Matrimoni GetById(int id)
             => _db.Query<Matrimoni>($"SELECT * FROM {TableName} WHERE {nameof(Matrimoni.id)}={id}").FirstOrDefault();
 
+        public int RemoveById(int id)
+            => _db.Execute($"DELETE FROM {TableName} WHERE {nameof(Matrimoni.id)}={id}");
+
         public IEnumerable<Matrimoni> GetAllByHusbandId(int id)
             => _db.Query<Matrimoni>($"SELECT * FROM {TableName} WHERE {nameof(Matrimoni.home_id)}={id}");
 

@@ -1,0 +1,16 @@
+﻿<br />
+
+@{
+    if (ViewBag.Success)
+    {
+        <div class="alert alert-success">
+            @ViewBag.Message
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            @ViewBag.Message
+        </div>
+    }
+}

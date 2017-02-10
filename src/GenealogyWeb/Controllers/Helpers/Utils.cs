@@ -54,9 +54,9 @@ namespace GenealogyWeb.Controllers
         private static string GetMarriageStr(IEnumerable<Persona> persons, int? home_id, int? dona_id)
         {
             var husband = persons.Where(x => x.id == home_id).SingleOrDefault();
-            var wife = persons.Where(x => x.id == home_id).SingleOrDefault();
+            var wife = persons.Where(x => x.id == dona_id).SingleOrDefault();
 
-            return $"{husband.FullName} & {wife.FullName}";
+            return $"{husband?.FullName} & {wife?.FullName}";
         }
 
         private static string GetSonStr(Fill son, IEnumerable<Persona> persons, IEnumerable<Matrimoni> marriages)   
@@ -66,9 +66,9 @@ namespace GenealogyWeb.Controllers
             var marriage = marriages.Where(x => x.id == son.matrimoni_id).Single();
 
             var husband = persons.Where(x => x.id == marriage.home_id).SingleOrDefault();
-            var wife = persons.Where(x => x.id == marriage.home_id).SingleOrDefault();
+            var wife = persons.Where(x => x.id == marriage.dona_id).SingleOrDefault();
 
-            return $"{husband.FullName} & {wife.FullName} => {person.FullName}";
+            return $"{husband?.FullName} & {wife?.FullName} => {person.FullName}";
         }
 
         #endregion

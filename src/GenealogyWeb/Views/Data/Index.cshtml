@@ -1,5 +1,4 @@
-﻿@using GenealogyWeb.Views
-@model GenealogyWeb.Core.Models.Persona
+﻿@model GenealogyWeb.Core.Models.Persona
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
@@ -7,20 +6,45 @@
 <script>
     $(document).ready(function () {
 
-        $('.selectpicker').change(function () {
+        $('#persons-selectpicker').change(function () {
             var personId = $(this).val();
-            addLinks(personId);
+            addPersonsLinks(personId);
         });
 
-        addLinks($('.selectpicker').val());
+        $('#marriages-selectpicker').change(function () {
+            var personId = $(this).val();
+            addMarriagesLinks(personId);
+        });
 
-        function addLinks(id){
+        $('#sons-selectpicker').change(function () {
+            var personId = $(this).val();
+            addSonsLinks(personId);
+        });
+
+        addPersonsLinks($('#persons-selectpicker').val());
+        addMarriagesLinks($('#marriages-selectpicker').val());
+        addSonsLinks($('#sons-selectpicker').val());
+
+        function addPersonsLinks(id){
             var url0 = '/data/personById?id=' + id;
             var url1 = '/data/deletePerson?id=' + id;            
             var url2 = '/data/marriageByPersonId?id=' + id;
             var url3 = '/data/persondownwardtree?id=' + id;
             var url4 = '/data/personupwardtree?id=' + id;            
-            $('#links').html('<a href="' + url0 + '">✎ edit person</a> | <a href="' + url1 + '">✗ delete person</a> | <a href="' + url2 + '">✎ edit marriage</a> | <a href="' + url3 + '">🡓 show downward tree</a> | <a href="' + url4 + '">🡑 show upward tree</a>');       
+            $('#persons-links').html('<a href="' + url0 + '">✎ edit selected</a> | <a href="' + url1 + '">✗ delete selected</a> | <a href="' + url2 + '">✎ edit marriage</a> | <a href="' + url3 + '">🡓 show downward tree</a> | <a href="' + url4 + '">🡑 show upward tree</a>');       
+        }
+
+        function addMarriagesLinks(id){
+            var url0 = '/data/marriageById?id=' + id;
+            var url1 = '/data/deleteMarriage?id=' + id;            
+            $('#marriages-links').html('<a href="' + url0 + '">✎ edit selected</a> | <a href="' + url1 + '">✗ delete selected</a>');       
+        }
+
+        function addSonsLinks(id){
+            var url0 = '/data/sonById?id=' + id;
+            var url1 = '/data/deleteSon?id=' + id;            
+            var url2 = '/data/marriageBySonId?id=' + id;
+            $('#sons-links').html('<a href="' + url0 + '">✎ edit selected</a> | <a href="' + url1 + '">✗ delete selected</a> | <a href="' + url2 + '">✎ edit marriage</a>');       
         }
 
     });
@@ -28,9 +52,10 @@
 
 <body>
 
-    <h2>Person selector</h2>
 
-    <div>@Html.ActionLink("+ add new person", "Person") | @Html.ActionLink("👁 full data view", "Tables")</div>
+    <h2>Persons</h2>
+
+    <div>@Html.ActionLink("+ add new person", "Person")</div>
 
     <div class="form-group">
         @Html.DropDownListFor(
@@ -39,15 +64,63 @@
             new
             {
                 @class = "form-control selectpicker",
+                @id = "persons-selectpicker",
                 data_show_subtext = "true",
                 data_live_search = "true"
             }
         )
     </div>
 
-    <div id="links"></div>
+    <div id="persons-links"></div>
     
     <hr/>
+
+
+    <h2>Marriages</h2>
+
+    <div>@Html.ActionLink("+ add new marriage", "Marriage")</div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(
+            m => m.id,
+            new SelectList((List<SelectListItem>)ViewBag.marriages, "Value", "Text"),
+            new
+            {
+                @class = "form-control selectpicker",
+                @id = "marriages-selectpicker",
+                data_show_subtext = "true",
+                data_live_search = "true"
+            }
+        )
+    </div>
+
+    <div id="marriages-links"></div>
+
+    <hr />
+
+
+    <h2>Sons</h2>
+
+    <div>@Html.ActionLink("+ add new son", "Son")</div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(
+            m => m.id,
+            new SelectList((List<SelectListItem>)ViewBag.sons, "Value", "Text"),
+            new
+            {
+                @class = "form-control selectpicker",
+                @id = "sons-selectpicker",
+                data_show_subtext = "true",
+                data_live_search = "true"
+            }
+        )
+    </div>
+
+    <div id="sons-links"></div>
+
+    <hr />
+
 
     <h2>Full data visualization</h2>
 

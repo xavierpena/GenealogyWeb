@@ -1,6 +1,4 @@
-﻿@using GenealogyWeb.Views
-
-@model GenealogyWeb.Core.Models.Persona
+﻿@model GenealogyWeb.Core.Models.Persona
 
 <br/>
 
@@ -10,6 +8,7 @@
         <div>
             @Html.ActionLink("✗ delete person", "deletePerson", new { id = Model.id })
             | @Html.ActionLink("✎ edit marriage", "marriageByPersonId", new { id = Model.id })
+            | @Html.ActionLink("✎ edit parents", "sonByPersonId", new { id = Model.id })
             | @Html.ActionLink("🡓 show downward tree", "persondownwardtree", new { id = Model.id })
             | @Html.ActionLink("🡑 show upward tree", "personupwardtree", new { id = Model.id })
         </div>

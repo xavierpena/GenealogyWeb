@@ -1,6 +1,4 @@
-﻿@using GenealogyWeb.Views
-
-@model GenealogyWeb.Core.Models.Fill
+﻿@model GenealogyWeb.Core.Models.Fill
 
 <br />
 
@@ -8,10 +6,7 @@
     if (Model.id.HasValue)
     {
         <div>
-            @*@Html.ActionLink("✗ delete person", "deletePerson", new { id = Model.id })
-            | @Html.ActionLink("✎ edit marriage", "marriageByPersonId", new { id = Model.id })
-            | @Html.ActionLink("🡓 show downward tree", "persondownwardtree", new { id = Model.id })
-            | @Html.ActionLink("🡑 show upward tree", "personupwardtree", new { id = Model.id })*@
+            @Html.ActionLink("✗ delete son", "deleteSon", new { id = Model.id })
         </div>
     }
     else
@@ -21,6 +16,8 @@
         </div>
     }
 }
+
+<hr/>
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
@@ -36,6 +33,11 @@
 
 @using (Html.BeginForm("Son", "Data"))
 {
+    <div class="form-group">
+        @Html.LabelFor(m => m.id)
+        @Html.TextBoxFor(m => m.id, new { @class = "form-control", @readonly = "readonly" })
+        @Html.ValidationMessageFor(m => m.id)
+    </div>
     <div class="form-group">
         @Html.LabelFor(m => m.matrimoni_id)
         @Html.DropDownListFor(

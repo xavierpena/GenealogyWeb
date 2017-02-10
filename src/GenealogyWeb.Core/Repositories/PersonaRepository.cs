@@ -31,6 +31,9 @@ namespace GenealogyWeb.Core.Repositories
         public Persona GetById(int id)
             => _db.Query<Persona>($"SELECT * FROM {TableName} WHERE {nameof(Persona.id)}={id}").FirstOrDefault();
 
+        public int RemoveById(int id)
+            => _db.Execute($"DELETE FROM {TableName} WHERE {nameof(Persona.id)}={id}");
+
         public IEnumerable<Persona> GetAllByIds(IEnumerable<int> ids)
         {
             if (!ids.Any())

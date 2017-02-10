@@ -61,11 +61,12 @@ namespace GenealogyWeb.Controllers
         public IActionResult Index()
         {
             var persons = _personRepository.GetAll();
+            var marriages = _marriageRepository.GetAll();
+            var sons = _sonRepository.GetAll();
 
-            ViewBag.persons = persons
-                .Select(x => new SelectListItem { Text = x.FullName, Value = x.id.ToString() })
-                .OrderBy(x => x.Text)
-                .ToList();
+            ViewBag.persons = Utils.GetPersonsSelectList(persons);
+            ViewBag.marriages = Utils.GetMarriagesSelectList(marriages, persons);
+            ViewBag.sons = Utils.GetSonsSelectList(sons, marriages, persons);
 
             var result = _downwardTreeBuilder.GetResult();
             var json = JsonConvert.SerializeObject(
@@ -146,6 +147,13 @@ namespace GenealogyWeb.Controllers
             return View("Person", person);            
         }
 
+        public ActionResult MarriageBySonId(int id)
+        {
+            var son = _sonRepository.GetById(id);
+            var marriage = _marriageRepository.GetById(son.matrimoni_id);
+            return Marriage(marriage);
+        }
+
         public ActionResult MarriageByPersonId(int id)
         {
             var person = _personRepository.GetById(id);
@@ -158,7 +166,7 @@ namespace GenealogyWeb.Controllers
                     if (marriagesByHusband.Count() == 1)
                         return Marriage(marriagesByHusband.Single());
                     else
-                        return BadRequest("Error: more than one marriage");
+                        return Message("Error: more than one marriage", false);
                 }
                 else
                 {
@@ -174,7 +182,7 @@ namespace GenealogyWeb.Controllers
                     if (marriagesByWife.Count() == 1)
                         return Marriage(marriagesByWife.Single());
                     else
-                        return BadRequest("Error: more than one marriage");
+                        return Message("Error: more than one marriage", false);
                 }
                 else
                 {
@@ -189,6 +197,14 @@ namespace GenealogyWeb.Controllers
             return Son(son);
         }
 
+        public ActionResult SonByPersonId(int id)
+        {
+            var son = _sonRepository.GetByPersonId(id);
+            if (son == null)
+                son = new Fill { persona_id = id };
+            return Son(son);
+        }
+
         public ActionResult Son(Fill son)
         {
             var persons = _personRepository.GetAll();
@@ -197,7 +213,7 @@ namespace GenealogyWeb.Controllers
             ViewBag.persons = Utils.GetPersonsSelectList(persons);           
             ViewBag.marriages = Utils.GetMarriagesSelectList(marriages, persons);
 
-            return View(son);
+            return View("Son", son);
         }
         
         public ActionResult MarriageById(int id)
@@ -219,57 +235,50 @@ namespace GenealogyWeb.Controllers
             return View("Marriage", marriage);
         }
 
-        public IActionResult Tables()
+        public ActionResult DeletePerson(int id)
         {
-            // Tutorial: handsontable load & save
-            // http://docs.handsontable.com/0.17.0/tutorial-load-and-save.html
+            try
+            {
+                _personRepository.RemoveById(id);
+                return Message("Person deleted succesfully", true);
+            }
+            catch (Exception ex)
+            {
+                return Message("Error deleting person: " + ex.Message, false);
+            }
+        }
 
-            //var user = _userManager.GetUserAsync(HttpContext.User).Result;
-            //if (user != null)
-            //{
-            //    // AUTHORIZE
-            //    if (user.Email == "testuser@gmail.com")
-            //    {
-            //        // TODO
-            //    }
-            //}
-            //return RedirectToAction(nameof(HomeController.Index), "Home");
+        private ActionResult Message(string message, bool success)
+        {
+            ViewBag.Success = success;
+            ViewBag.Message = "Error deleting person: " + message;
+            return View("Message");
+        }
 
-            ViewData["Title"] = "Full overview";
+        public ActionResult DeleteMarriage(int id)
+        {
+            try
+            {
+                _marriageRepository.RemoveById(id);
+                return Message("Marriage deleted succesfully", true);
+            }
+            catch (Exception ex)
+            {
+                return Message("Error deleting marriage: " + ex.Message, false);
+            }
+        }
 
-            var persons = _personRepository.GetAll();
-            var marriages = _marriageRepository.GetAll();
-            var sons = _sonRepository.GetAll();
-
-            var homesPerMatrimoni = marriages.ToDictionary(m => m, m => persons.Where(p => m.home_id == p.id).SingleOrDefault());
-            var donesPerMatrimoni = marriages.ToDictionary(m => m, m => persons.Where(p => m.dona_id == p.id).SingleOrDefault());
-
-            var personaPerFills = sons.ToDictionary(f => f, f => persons.Where(p => f.persona_id == p.id).Single());
-            var matrimoniPerFills = sons.ToDictionary(f => f, f => marriages.Where(m => f.matrimoni_id == m.id).Single());
-
-            var searchKeyPerMarriage = marriages.ToDictionary(m => m, m => m.GetSearchKey() + " | home=" + homesPerMatrimoni[m]?.GetSearchKey() + " + dona=" + donesPerMatrimoni[m]?.GetSearchKey());
-            var searchKeyPerSon = sons.ToDictionary(f => f, f => f.GetSearchKey() + " | fill=" + personaPerFills[f].GetSearchKey() + " | matrimoni=(" + searchKeyPerMarriage[matrimoniPerFills[f]] + ")");
-
-            // Persons:
-            var personesRows = persons.Select(x => $"[\"{x.GetSearchKey()}\",\"{x.id}\",\"{x.nom}\",\"{x.llinatge_1}\",\"{x.llinatge_2}\",\"{x.home}\",\"{x.naixement_lloc}\",\"{x.naixement_data}\",\"{x.mort_lloc}\",\"{x.mort_data}\",\"{x.info}\",\"{x.observacions}\"]");
-            ViewData["title_1"] = "Persons";
-            ViewData["data_1"] = new HtmlString("[" + string.Join(",", personesRows) + "]");
-            ViewData["colHeaders_1"] = new HtmlString($"[\"search_key\",\"id\",\"nom\",\"llinatge_1\",\"llinatge_2\",\"home\",\"naixement_lloc\",\"naixement_data\",\"mort_lloc\",\"mort_data\",\"info\",\"observacions\"]");
-
-            // Marriages:                 
-            var matrimonisRows = marriages.Select(x => $"[\"{ searchKeyPerMarriage[x] }\",\"{x.id}\",\"{x.home_id}\",\"{x.dona_id}\",\"{x.lloc}\",\"{x.data}\",\"{x.observacions}\"]");
-            ViewData["title_2"] = "Marriages";
-            ViewData["data_2"] = new HtmlString("[" + string.Join(",", matrimonisRows) + "]");
-            ViewData["colHeaders_2"] = new HtmlString($"[\"search_key\",\"id\",\"home_id\",\"dona_id\",\"lloc\",\"data\",\"observacions\"]");
-
-            // Sons:                    
-            var fillsRows = sons.Select(x => $"[\"{searchKeyPerSon[x]}\",\"{x.id}\",\"{x.matrimoni_id}\",\"{x.persona_id}\",\"{x.observacions}\"]");
-            ViewData["title_3"] = "Sons";
-            ViewData["data_3"] = new HtmlString("[" + string.Join(",", fillsRows) + "]");
-            ViewData["colHeaders_3"] = new HtmlString($"[\"search_key\",\"id\",\"matrimoni_id\",\"persona_id\",\"observacions\"]");
-
-            return View();
-
+        public ActionResult DeleteSon(int id)
+        {
+            try
+            {
+                _sonRepository.RemoveById(id);
+                return Message("Son deleted succesfully", true);
+            }
+            catch (Exception ex)
+            {
+                return Message("Error deleting son: " + ex.Message, false);
+            }
         }
 
     }
