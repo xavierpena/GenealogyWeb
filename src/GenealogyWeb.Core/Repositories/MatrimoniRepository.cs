@@ -32,5 +32,48 @@ namespace GenealogyWeb.Core.Repositories
 
         public IEnumerable<Matrimoni> GetAllByWifeId(int id)
             => _db.Query<Matrimoni>($"SELECT * FROM {TableName} WHERE {nameof(Matrimoni.dona_id)}={id}");
+
+        public Matrimoni Add(Matrimoni marriage)
+        {
+            var id = _db.Query<int>(
+                      $"INSERT INTO {TableName}"
+                      + $" ({string.Join(",", GetNames().Select(x => $"{x}"))})"
+                      + $" VALUES ({string.Join(",", GetNames().Select(x => $"@{x}"))});"
+                      + $" SELECT LAST_INSERT_ID();",
+                      GetObj(marriage)
+                  ).Single();
+
+            marriage.id = id;
+            return marriage;
+        }
+
+        public void Update(Matrimoni marriage)
+            => _db.Execute(
+                      $"UPDATE {TableName}"
+                      + $" SET {string.Join(",", GetNames().Select(x => $"{x}=@{x}"))})"
+                      + $" WHERE {nameof(Matrimoni.id)}={marriage.id}",
+                      GetObj(marriage)
+                  );
+
+        #region "HELPERS"
+
+        private string[] GetNames() => new string[] {
+                    nameof(Matrimoni.home_id),
+                    nameof(Matrimoni.dona_id),
+                    nameof(Matrimoni.data),
+                    nameof(Matrimoni.lloc),
+                    nameof(Matrimoni.observacions)
+                };
+
+        private object GetObj(Matrimoni marriage) => new
+        {
+            nom = marriage.home_id,
+            llinatge_1 = marriage.dona_id,
+            llinatge_2 = marriage.data,
+            naixement_data = marriage.lloc,
+            naixement_lloc = marriage.observacions
+        };
+
+        #endregion
     }
 }

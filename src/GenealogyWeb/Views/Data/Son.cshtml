@@ -1,4 +1,19 @@
-﻿@model GenealogyWeb.Core.Models.Fill
+﻿@using GenealogyWeb.Controllers
+@model GenealogyWeb.Core.Models.Fill
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
+<link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css" />
+<script src="~/js/askForConfirmation.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker({
+            liveSearch: true,
+            showSubtext: true
+        });
+    });
+</script>
 
 <br />
 
@@ -6,7 +21,12 @@
     if (Model.id.HasValue)
     {
         <div>
-            @Html.ActionLink("✗ delete son", "deleteSon", new { id = Model.id })
+            @Html.ActionLink(
+               "✗ delete son",
+               nameof(DataController.DeleteSon),
+               new { id = Model.id },
+               new { @class = "askforconfirmation" }
+           )
         </div>
     }
     else
@@ -19,19 +39,7 @@
 
 <hr/>
 
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
-<link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css" />
-<script>
-    $(document).ready(function () {
-        $('.selectpicker').selectpicker({
-            liveSearch: true,
-            showSubtext: true
-        });
-    });
-</script>
-
-@using (Html.BeginForm("Son", "Data"))
+@using (Html.BeginForm(nameof(DataController.PersistSon), "Data"))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.id)

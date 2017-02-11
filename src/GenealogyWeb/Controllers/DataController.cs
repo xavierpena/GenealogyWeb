@@ -28,6 +28,8 @@ namespace GenealogyWeb.Controllers
     //[Authorize]
     public class DataController : Controller
     {
+        private const string NodeTreeViewName = "NodeTree";
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
 
@@ -37,15 +39,15 @@ namespace GenealogyWeb.Controllers
 
         private DownwardTreeBuilder _downwardTreeBuilder;
         private UpwardTreeBuilder _upwardTreeBuilder;
-
+        
         public DataController(
-        UserManager<ApplicationUser> userManager,
-        ILoggerFactory loggerFactory,
-        PersonaRepository personRepository,
-        MatrimoniRepository marriageRepository,
-        FillRepository sonRepository,
-        DownwardTreeBuilder downwardTreeBuilder,
-        UpwardTreeBuilder upwardTreeBuilder)
+            UserManager<ApplicationUser> userManager,
+            ILoggerFactory loggerFactory,
+            PersonaRepository personRepository,
+            MatrimoniRepository marriageRepository,
+            FillRepository sonRepository,
+            DownwardTreeBuilder downwardTreeBuilder,
+            UpwardTreeBuilder upwardTreeBuilder)
         {
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<ManageController>();
@@ -95,7 +97,7 @@ namespace GenealogyWeb.Controllers
             var encodedJson = new HtmlString(json);
             ViewData["Title"] = "Tree";
             ViewData["json"] = encodedJson;
-            return View("NodeTree");
+            return View(NodeTreeViewName);
         }
 
         public IActionResult PersonDownwardTree(int id)
@@ -111,7 +113,7 @@ namespace GenealogyWeb.Controllers
             var encodedJson = new HtmlString(json);
             ViewData["Title"] = "Tree";
             ViewData["json"] = encodedJson;
-            return View("NodeTree");
+            return View(NodeTreeViewName);
         }
 
         public IActionResult PersonUpwardTree(int id)
@@ -127,24 +129,57 @@ namespace GenealogyWeb.Controllers
             var encodedJson = new HtmlString(json);
             ViewData["Title"] = "Tree";
             ViewData["json"] = encodedJson;
-            return View("NodeTree");
+            return View(NodeTreeViewName);
+        }        
+
+        public ActionResult PersistPerson(Persona person)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("State is invalid");
+
+            if (!person.id.HasValue)
+                person = _personRepository.Add(person);
+            else
+                _personRepository.Update(person);
+
+            return RedirectToAction(nameof(Person), person);
+        }
+
+        public ActionResult PersistMarriage(Matrimoni marriage)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("State is invalid");
+
+            if (!marriage.id.HasValue)
+                marriage = _marriageRepository.Add(marriage);
+            else
+                _marriageRepository.Update(marriage);
+
+            return RedirectToAction(nameof(Marriage), marriage);
+        }
+
+        public ActionResult PersistSon(Fill son)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("State is invalid");
+
+            if (!son.id.HasValue)
+                son = _sonRepository.Add(son);
+            else
+                _sonRepository.Update(son);
+
+            return RedirectToAction(nameof(Son), son);
         }
 
         public ActionResult PersonById(int id)
         {
             var person = _personRepository.GetById(id);
-            return Person(person);
+            return RedirectToAction(nameof(Person), person);
         }
 
         public ActionResult Person(Persona person)
         {
-            //if (!ModelState.IsValid)
-            //    return View("Person", person);
-
-            //if (person == null)
-            //    person = new Persona();
-
-            return View("Person", person);            
+            return View(person);            
         }
 
         public ActionResult MarriageBySonId(int id)
@@ -164,13 +199,13 @@ namespace GenealogyWeb.Controllers
                 if (marriagesByHusband.Any())
                 {
                     if (marriagesByHusband.Count() == 1)
-                        return Marriage(marriagesByHusband.Single());
+                        return RedirectToAction(nameof(Marriage), marriagesByHusband.Single());
                     else
                         return Message("Error: more than one marriage", false);
                 }
                 else
                 {
-                    return Marriage(new Matrimoni { home_id = id });
+                    return RedirectToAction(nameof(Marriage), new Matrimoni { home_id = id });
                 }
             }
             else
@@ -180,13 +215,13 @@ namespace GenealogyWeb.Controllers
                 if (marriagesByWife.Any())
                 {
                     if (marriagesByWife.Count() == 1)
-                        return Marriage(marriagesByWife.Single());
+                        return RedirectToAction(nameof(Marriage), marriagesByWife.Single());
                     else
                         return Message("Error: more than one marriage", false);
                 }
                 else
                 {
-                    return Marriage(new Matrimoni { dona_id = id });
+                    return RedirectToAction(nameof(Marriage), new Matrimoni { dona_id = id });
                 }
             }            
         }
@@ -194,7 +229,7 @@ namespace GenealogyWeb.Controllers
         public ActionResult SonById(int id)
         {
             var son = _sonRepository.GetById(id);
-            return Son(son);
+            return RedirectToAction(nameof(Son), son);
         }
 
         public ActionResult SonByPersonId(int id)
@@ -202,7 +237,7 @@ namespace GenealogyWeb.Controllers
             var son = _sonRepository.GetByPersonId(id);
             if (son == null)
                 son = new Fill { persona_id = id };
-            return Son(son);
+            return RedirectToAction(nameof(Son), son);
         }
 
         public ActionResult Son(Fill son)
@@ -213,13 +248,13 @@ namespace GenealogyWeb.Controllers
             ViewBag.persons = Utils.GetPersonsSelectList(persons);           
             ViewBag.marriages = Utils.GetMarriagesSelectList(marriages, persons);
 
-            return View("Son", son);
+            return View(son);
         }
         
         public ActionResult MarriageById(int id)
         {
             var marriage = _marriageRepository.GetById(id);
-            return Marriage(marriage);
+            return RedirectToAction(nameof(Marriage), marriage);
         }
 
         public ActionResult Marriage(Matrimoni marriage)
@@ -232,7 +267,7 @@ namespace GenealogyWeb.Controllers
             //if (!ModelState.IsValid)
             //    return View("Marriage", marriage);
 
-            return View("Marriage", marriage);
+            return View(marriage);
         }
 
         public ActionResult DeletePerson(int id)
@@ -246,13 +281,6 @@ namespace GenealogyWeb.Controllers
             {
                 return Message("Error deleting person: " + ex.Message, false);
             }
-        }
-
-        private ActionResult Message(string message, bool success)
-        {
-            ViewBag.Success = success;
-            ViewBag.Message = "Error deleting person: " + message;
-            return View("Message");
         }
 
         public ActionResult DeleteMarriage(int id)
@@ -279,6 +307,13 @@ namespace GenealogyWeb.Controllers
             {
                 return Message("Error deleting son: " + ex.Message, false);
             }
+        }
+
+        private ActionResult Message(string message, bool success)
+        {
+            ViewBag.Success = success;
+            ViewBag.Message = message;
+            return View(nameof(Message));
         }
 
     }

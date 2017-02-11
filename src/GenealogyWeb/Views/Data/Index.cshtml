@@ -1,8 +1,14 @@
-﻿@model GenealogyWeb.Core.Models.Persona
+﻿@using GenealogyWeb.Controllers
+@model GenealogyWeb.Core.Models.Persona
+
+@{ 
+    var dataControllerName = "data";
+}
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
 <link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css" />
+
 <script>
     $(document).ready(function () {
 
@@ -26,36 +32,84 @@
         addSonsLinks($('#sons-selectpicker').val());
 
         function addPersonsLinks(id){
-            var url0 = '/data/personById?id=' + id;
-            var url1 = '/data/deletePerson?id=' + id;            
-            var url2 = '/data/marriageByPersonId?id=' + id;
-            var url3 = '/data/persondownwardtree?id=' + id;
-            var url4 = '/data/personupwardtree?id=' + id;            
-            $('#persons-links').html('<a href="' + url0 + '">✎ edit selected</a> | <a href="' + url1 + '">✗ delete selected</a> | <a href="' + url2 + '">✎ edit marriage</a> | <a href="' + url3 + '">🡓 show downward tree</a> | <a href="' + url4 + '">🡑 show upward tree</a>');       
+            var url0 = '/@dataControllerName/@nameof(DataController.PersonById)?id=' + id;
+            var url1 = '/@dataControllerName/@nameof(DataController.DeletePerson)?id=' + id;            
+            var url2 = '/@dataControllerName/@nameof(DataController.MarriageByPersonId)?id=' + id;
+            var url3 = '/@dataControllerName/@nameof(DataController.PersonDownwardTree)?id=' + id;
+            var url4 = '/@dataControllerName/@nameof(DataController.PersonUpwardTree)?id=' + id;            
+            $('#persons-links').html(
+                '<a href="' + url0 + '">✎ edit selected</a>' 
+                + ' | <a href="' + url1 + '" class="askforconfirmation">✗ delete selected</a>' 
+                + ' | <a href="' + url2 + '">✎ edit marriage</a>' 
+                + ' | <a href="' + url3 + '">🡓 show downward tree</a>' 
+                + ' | <a href="' + url4 + '">🡑 show upward tree</a>'
+                );       
         }
 
         function addMarriagesLinks(id){
-            var url0 = '/data/marriageById?id=' + id;
-            var url1 = '/data/deleteMarriage?id=' + id;            
-            $('#marriages-links').html('<a href="' + url0 + '">✎ edit selected</a> | <a href="' + url1 + '">✗ delete selected</a>');       
+            var url0 = '/@dataControllerName/@nameof(DataController.MarriageById)?id=' + id;
+            var url1 = '/@dataControllerName/@nameof(DataController.DeleteMarriage)?id=' + id;            
+            $('#marriages-links').html(
+                    '<a href="' + url0 + '">✎ edit selected</a>'
+                    + ' | <a href="' + url1 + '" class="askforconfirmation">✗ delete selected</a>'
+                );       
         }
 
         function addSonsLinks(id){
-            var url0 = '/data/sonById?id=' + id;
-            var url1 = '/data/deleteSon?id=' + id;            
-            var url2 = '/data/marriageBySonId?id=' + id;
-            $('#sons-links').html('<a href="' + url0 + '">✎ edit selected</a> | <a href="' + url1 + '">✗ delete selected</a> | <a href="' + url2 + '">✎ edit marriage</a>');       
+            var url0 = '/@dataControllerName/@nameof(DataController.SonById)?id=' + id;
+            var url1 = '/@dataControllerName/@nameof(DataController.DeleteSon)?id=' + id;            
+            var url2 = '/@dataControllerName/@nameof(DataController.MarriageBySonId)?id=' + id;
+            $('#sons-links').html(
+                    '<a href="' + url0 + '">✎ edit selected</a>' 
+                    + ' | <a href="' + url1 + '" class="askforconfirmation">✗ delete selected</a>' 
+                    + ' | <a href="' + url2 + '">✎ edit marriage</a>'
+                );       
         }
+
+        /**
+        * Ask for confirmation
+        **/
+        var handleAskfordelete = function (e) {
+            e.preventDefault();
+
+            var href = this.getAttribute("data-href");
+            var sure = confirm("Are you sure you want to delete this item?");
+            if (!sure) return;
+            document.location = href;
+        }
+
+        $("a.askforconfirmation")
+            .click(handleAskfordelete)
+            .bind("contextmenu", handleAskfordelete)
+            .dblclick(handleAskfordelete)
+            .each(function () {
+                var href = this.href;
+                this.setAttribute("data-href", href);
+                this.href = "javascript:void('Navigate to " + href.replace("'", "") + "')";
+            })
 
     });
 </script>
 
-<body>
+<!-- node tree -->
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/d3/d3.min.js"></script>
+<link rel="stylesheet" href="~/css/nodeTree.css" />
+
+<script>
+    var treeData = @ViewBag.json;
+</script>
+
+<script src="~/js/nodeTree.js"></script>
+
+<!-- node tree -->
+
+<body>
 
     <h2>Persons</h2>
 
-    <div>@Html.ActionLink("+ add new person", "Person")</div>
+    <div>@Html.ActionLink("+ add new person", nameof(DataController.Person))</div>
 
     <div class="form-group">
         @Html.DropDownListFor(
@@ -78,7 +132,7 @@
 
     <h2>Marriages</h2>
 
-    <div>@Html.ActionLink("+ add new marriage", "Marriage")</div>
+    <div>@Html.ActionLink("+ add new marriage", nameof(DataController.Marriage))</div>
 
     <div class="form-group">
         @Html.DropDownListFor(
@@ -101,7 +155,7 @@
 
     <h2>Sons</h2>
 
-    <div>@Html.ActionLink("+ add new son", "Son")</div>
+    <div>@Html.ActionLink("+ add new son", nameof(DataController.Son))</div>
 
     <div class="form-group">
         @Html.DropDownListFor(
@@ -127,18 +181,3 @@
     <div id="tree-container"></div>
 
 </body>
-
-
-<!-- node tree -->
-
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/d3/d3.min.js"></script>
-<link rel="stylesheet" href="~/css/nodeTree.css" />
-
-<script>
-    var treeData = @ViewBag.json;
-</script>
-
-<script src="~/js/nodeTree.js"></script>
-
-<!-- node tree -->

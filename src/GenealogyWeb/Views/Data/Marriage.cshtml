@@ -1,27 +1,11 @@
-﻿@model GenealogyWeb.Core.Models.Matrimoni
-
-<br />
-
-@{
-    if (Model.id.HasValue)
-    {
-        <div>
-            @Html.ActionLink("✗ delete marriage", "deleteMarriage", new { id = Model.id })
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-info">
-            <strong>Info:</strong> create a new person.
-        </div>
-    }
-}
-
-<hr />
+﻿@using GenealogyWeb.Controllers
+@model GenealogyWeb.Core.Models.Matrimoni
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
 <link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css" />
+<script src="~/js/askForConfirmation.js"></script>
+
 <script>
     $(document).ready(function () {
         $('.selectpicker').selectpicker({
@@ -31,7 +15,31 @@
     });
 </script>
 
-@using (Html.BeginForm("Marriage", "Data"))
+<br />
+
+@{
+    if (Model.id.HasValue)
+    {
+        <div>
+            @Html.ActionLink(
+               "✗ delete marriage", 
+               nameof(DataController.DeleteMarriage), 
+               new { id = Model.id }, 
+               new {@class = "askforconfirmation" }
+           )
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <strong>Info:</strong> create a new marriage.
+        </div>
+    }
+}
+
+<hr />
+
+@using (Html.BeginForm(nameof(DataController.PersistMarriage), "Data"))
 {    
     <div class="form-group">
         @Html.LabelFor(m => m.id)
@@ -41,29 +49,29 @@
     <div class="form-group">
         @Html.LabelFor(m => m.home_id)
         @Html.DropDownListFor(
-    m => m.home_id,
-    new SelectList((List<SelectListItem>)ViewData["men"], "Value", "Text"),
-    new
-    {
-        @class = "form-control selectpicker",
-        data_show_subtext = "true",
-        data_live_search = "true"
-    }
-)
+            m => m.home_id,
+            new SelectList((List<SelectListItem>)ViewData["men"], "Value", "Text"),
+            new
+            {
+                @class = "form-control selectpicker",
+                data_show_subtext = "true",
+                data_live_search = "true"
+            }
+        )
         @Html.ValidationMessageFor(m => m.home_id)
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.dona_id)
         @Html.DropDownListFor(
-    m => m.dona_id,
-    new SelectList((List<SelectListItem>)ViewData["women"], "Value", "Text"),
-    new
-    {
-        @class = "form-control selectpicker",
-        data_show_subtext = "true",
-        data_live_search = "true"
-    }
-)
+            m => m.dona_id,
+            new SelectList((List<SelectListItem>)ViewData["women"], "Value", "Text"),
+            new
+            {
+                @class = "form-control selectpicker",
+                data_show_subtext = "true",
+                data_live_search = "true"
+            }
+        )
         @Html.ValidationMessageFor(m => m.home_id)
     </div>
     <div class="form-group">

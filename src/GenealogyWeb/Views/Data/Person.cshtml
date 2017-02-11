@@ -1,4 +1,8 @@
-﻿@model GenealogyWeb.Core.Models.Persona
+﻿@using GenealogyWeb.Controllers
+@model GenealogyWeb.Core.Models.Persona
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/askForConfirmation.js"></script>
 
 <br/>
 
@@ -6,11 +10,11 @@
     if (Model.id.HasValue)
     {
         <div>
-            @Html.ActionLink("✗ delete person", "deletePerson", new { id = Model.id })
-            | @Html.ActionLink("✎ edit marriage", "marriageByPersonId", new { id = Model.id })
-            | @Html.ActionLink("✎ edit parents", "sonByPersonId", new { id = Model.id })
-            | @Html.ActionLink("🡓 show downward tree", "persondownwardtree", new { id = Model.id })
-            | @Html.ActionLink("🡑 show upward tree", "personupwardtree", new { id = Model.id })
+            @Html.ActionLink("✗ delete person", nameof(DataController.DeletePerson), new { id = Model.id }, new { @class = "askforconfirmation" })
+            | @Html.ActionLink("✎ edit marriage", nameof(DataController.MarriageByPersonId), new { id = Model.id })
+            | @Html.ActionLink("✎ edit parents", nameof(DataController.SonByPersonId), new { id = Model.id })
+            | @Html.ActionLink("🡓 show downward tree", nameof(DataController.PersonDownwardTree), new { id = Model.id })
+            | @Html.ActionLink("🡑 show upward tree", nameof(DataController.PersonUpwardTree), new { id = Model.id })
         </div>
     }
     else
@@ -25,7 +29,7 @@
 <hr />
 
 
-@using (Html.BeginForm("Person", "Data"))
+@using (Html.BeginForm(nameof(DataController.PersistPerson), "Data"))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.id)
