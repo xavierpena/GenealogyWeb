@@ -19,9 +19,9 @@ namespace GenealogyWeb.Core.Business
         /// Full person description formatted as:
         /// `male/female_sign name/surname1/surname2 (birth=>death) id=XXX`
         /// </summary>
-        public static string GetPersonDescription(Persona person)
-            => $"{ (person.home ? MaleSignStr : FemaleSignStr) } {GetStr(person.nom)}/{GetStr(person.llinatge_1)}/{GetStr(person.llinatge_2)}"
-                + $" ({GetYear(person.naixement_data) }=>{GetYear(person.mort_data)})"
+        public static string GetPersonDescription(Person person)
+            => $"{ (person.is_male ? MaleSignStr : FemaleSignStr) } {GetStr(person.name)}/{GetStr(person.father_surname)}/{GetStr(person.mother_surname)}"
+                + $" ({GetYear(person.birth_date) }=>{GetYear(person.death_date)})"
                 + $" id={person.id}";
 
         /// <summary>
@@ -55,10 +55,10 @@ namespace GenealogyWeb.Core.Business
                 return transformed;
         }
 
-        internal static string GetMarriageDescription(Matrimoni marriage)
-            => $"{MarriageSignStr} Marriage ({ Utils.GetYear(marriage.data) }) id={marriage.id}";
+        internal static string GetMarriageDescription(Marriage marriage)
+            => $"{MarriageSignStr} Marriage ({ Utils.GetYear(marriage.date) }) id={marriage.id}";
 
-        public static string GetDuplicateStr(Persona person)
+        public static string GetDuplicateStr(Person person)
             => $"[ {AlertStr} DUPLICATE ] {GetPersonDescription(person)}";
 
         public static string GetDuplicateStr(string description)

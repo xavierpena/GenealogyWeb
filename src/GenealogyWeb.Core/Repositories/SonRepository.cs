@@ -8,33 +8,33 @@ using System.Threading.Tasks;
 
 namespace GenealogyWeb.Core.Repositories
 {
-    public class FillRepository
+    public class SonRepository
     {
-        public const string TableName = "fills";
+        public const string TableName = "sons";
 
         private IDbConnection _db;        
-        public FillRepository(string connStr)
+        public SonRepository(string connStr)
         {
             _db = DbConnectionFactory.GetMysqlConnection(connStr);
         }
 
-        public IEnumerable<Fill> GetAll()
-            => _db.Query<Fill>($"SELECT * FROM {TableName}");
+        public IEnumerable<Son> GetAll()
+            => _db.Query<Son>($"SELECT * FROM {TableName}");
 
-        public Fill GetById(int id)
-            => _db.Query<Fill>($"SELECT * FROM {TableName} WHERE {nameof(Fill.id)}={id}").FirstOrDefault();
+        public Son GetById(int id)
+            => _db.Query<Son>($"SELECT * FROM {TableName} WHERE {nameof(Son.id)}={id}").FirstOrDefault();
 
         public int RemoveById(int id)
-            => _db.Execute($"DELETE FROM {TableName} WHERE {nameof(Fill.id)}={id}");
+            => _db.Execute($"DELETE FROM {TableName} WHERE {nameof(Son.id)}={id}");
 
-        public IEnumerable<Fill> GetAllByMarriageId(int id)
-            => _db.Query<Fill>($"SELECT * FROM {TableName} WHERE {nameof(Fill.matrimoni_id)}={id}");
+        public IEnumerable<Son> GetAllByMarriageId(int id)
+            => _db.Query<Son>($"SELECT * FROM {TableName} WHERE {nameof(Son.marriage_id)}={id}");
 
-        public Fill GetByPersonId(int id)
-            => _db.Query<Fill>($"SELECT * FROM {TableName} WHERE {nameof(Fill.persona_id)}={id}")
+        public Son GetByPersonId(int id)
+            => _db.Query<Son>($"SELECT * FROM {TableName} WHERE {nameof(Son.person_id)}={id}")
             .FirstOrDefault();
 
-        public Fill Add(Fill son)
+        public Son Add(Son son)
         {
             var id = _db.Query<int>(
                       $"INSERT INTO {TableName}"
@@ -48,27 +48,27 @@ namespace GenealogyWeb.Core.Repositories
             return son;
         }
 
-        public void Update(Fill son)
+        public void Update(Son son)
             => _db.Execute(
                       $"UPDATE {TableName}"
                       + $" SET {string.Join(",", GetNames().Select(x => $"{x}=@{x}"))})"
-                      + $" WHERE {nameof(Fill.id)}={son.id}",
+                      + $" WHERE {nameof(Son.id)}={son.id}",
                       GetObj(son)
                   );
 
         #region "HELPERS"
 
         private string[] GetNames() => new string[] {
-                    nameof(Fill.matrimoni_id),
-                    nameof(Fill.persona_id),
-                    nameof(Fill.observacions)
+                    nameof(Son.marriage_id),
+                    nameof(Son.person_id),
+                    nameof(Son.comments)
                 };
 
-        private object GetObj(Fill son) => new
+        private object GetObj(Son son) => new
         {
-            nom = son.matrimoni_id,
-            llinatge_1 = son.persona_id,
-            llinatge_2 = son.observacions
+            nom = son.marriage_id,
+            llinatge_1 = son.person_id,
+            llinatge_2 = son.comments
         };
 
         #endregion

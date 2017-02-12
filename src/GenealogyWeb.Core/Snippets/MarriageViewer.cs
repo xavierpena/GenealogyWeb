@@ -9,28 +9,28 @@ namespace GenealogyWeb.Core.Snippets
 {
     public class MarriageViewer
     {
-        private Matrimoni _matrimoni;
+        private Marriage _matrimoni;
 
-        private PersonaRepository _personaRepository;
-        private MatrimoniRepository _matrimoniRepository;
-        private FillRepository _fillRepository;
+        private PersonRepository _personaRepository;
+        private MarriageRepository _matrimoniRepository;
+        private SonRepository _fillRepository;
 
-        private Persona Home;
-        private Persona Dona;
-        private IEnumerable<Persona> Fills;
+        private Person Home;
+        private Person Dona;
+        private IEnumerable<Person> Fills;
 
-        public MarriageViewer(string connStr, Matrimoni matrimoni)
+        public MarriageViewer(string connStr, Marriage matrimoni)
         {
-            _personaRepository = new PersonaRepository(connStr);
-            _matrimoniRepository = new MatrimoniRepository(connStr);
-            _fillRepository = new FillRepository(connStr);
+            _personaRepository = new PersonRepository(connStr);
+            _matrimoniRepository = new MarriageRepository(connStr);
+            _fillRepository = new SonRepository(connStr);
 
             _matrimoni = matrimoni;
         }
 
         public static string GetAllInfos(string connStr)
         {
-            var matrimoniRepository = new MatrimoniRepository(connStr);
+            var matrimoniRepository = new MarriageRepository(connStr);
             var matrimonis = matrimoniRepository.GetAll();
             var results = new List<string>();
             foreach (var matrimoni in matrimonis)
@@ -77,16 +77,16 @@ namespace GenealogyWeb.Core.Snippets
 
         private void Process()
         {
-            if (_matrimoni.home_id != null)
-                Home = _personaRepository.GetById(_matrimoni.home_id.Value);
+            if (_matrimoni.husband_id != null)
+                Home = _personaRepository.GetById(_matrimoni.husband_id.Value);
 
-            if (_matrimoni.dona_id != null)
-                Dona = _personaRepository.GetById(_matrimoni.dona_id.Value);
+            if (_matrimoni.wife_id != null)
+                Dona = _personaRepository.GetById(_matrimoni.wife_id.Value);
 
             var fills = _fillRepository.GetAllByMarriageId(_matrimoni.id.Value);
             if (fills != null)
             {
-                Fills = _personaRepository.GetAllByIds(fills.Select(x => x.persona_id));
+                Fills = _personaRepository.GetAllByIds(fills.Select(x => x.person_id));
             }
         }
 

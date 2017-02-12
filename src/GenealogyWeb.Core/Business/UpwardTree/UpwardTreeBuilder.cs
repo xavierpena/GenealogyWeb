@@ -9,20 +9,20 @@ namespace GenealogyWeb.Core.Business.UpwardTree
 {
     public class UpwardTreeBuilder
     {
-        private PersonaRepository _personRepository;
-        private MatrimoniRepository _marriageRepository;
-        private FillRepository _sonRepository;
+        private PersonRepository _personRepository;
+        private MarriageRepository _marriageRepository;
+        private SonRepository _sonRepository;
 
-        private List<Persona> _persons;
-        private List<Matrimoni> _marriages;
-        private List<Fill> _sons;
+        private List<Person> _persons;
+        private List<Marriage> _marriages;
+        private List<Son> _sons;
 
-        private Dictionary<Persona, JsonItem> _processed;
+        private Dictionary<Person, JsonItem> _processed;
 
         public UpwardTreeBuilder(
-            PersonaRepository personRepository,
-            MatrimoniRepository marriageRepository,
-            FillRepository sonRepository)
+            PersonRepository personRepository,
+            MarriageRepository marriageRepository,
+            SonRepository sonRepository)
         {
             _personRepository = personRepository;
             _marriageRepository = marriageRepository;
@@ -31,7 +31,7 @@ namespace GenealogyWeb.Core.Business.UpwardTree
 
         private void Init()
         {
-            _processed = new Dictionary<Persona, JsonItem>();
+            _processed = new Dictionary<Person, JsonItem>();
 
             _persons = _personRepository.GetAll().ToList();
             _marriages = _marriageRepository.GetAll().ToList();
@@ -56,7 +56,7 @@ namespace GenealogyWeb.Core.Business.UpwardTree
         ///     * Add the deep node from the mother
         ///     
         /// </summary>
-        private JsonItem GetDeepNode(Persona person)
+        private JsonItem GetDeepNode(Person person)
         {
             if (_processed.ContainsKey(person))
                 return new JsonItem(_processed[person]);
@@ -65,14 +65,14 @@ namespace GenealogyWeb.Core.Business.UpwardTree
 
             _processed.Add(person, personNode);
 
-            var sonOf = _sons.Where(x => x.persona_id == person.id).SingleOrDefault();
+            var sonOf = _sons.Where(x => x.person_id == person.id).SingleOrDefault();
 
             if(sonOf != null)
             {
-                var marriage = _marriages.Where(x => x.id == sonOf.matrimoni_id).Single();
+                var marriage = _marriages.Where(x => x.id == sonOf.marriage_id).Single();
 
-                var father = _persons.Where(x => x.id == marriage.home_id).SingleOrDefault();
-                var mother = _persons.Where(x => x.id == marriage.dona_id).SingleOrDefault();
+                var father = _persons.Where(x => x.id == marriage.husband_id).SingleOrDefault();
+                var mother = _persons.Where(x => x.id == marriage.wife_id).SingleOrDefault();
 
                 var marriageNode = new JsonItem(Utils.GetMarriageDescription(marriage));
                 personNode.AddChild(marriageNode);

@@ -33,9 +33,9 @@ namespace GenealogyWeb.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
 
-        private PersonaRepository _personRepository;
-        private MatrimoniRepository _marriageRepository;
-        private FillRepository _sonRepository;
+        private PersonRepository _personRepository;
+        private MarriageRepository _marriageRepository;
+        private SonRepository _sonRepository;
 
         private DownwardTreeBuilder _downwardTreeBuilder;
         private UpwardTreeBuilder _upwardTreeBuilder;
@@ -43,9 +43,9 @@ namespace GenealogyWeb.Controllers
         public DataController(
             UserManager<ApplicationUser> userManager,
             ILoggerFactory loggerFactory,
-            PersonaRepository personRepository,
-            MatrimoniRepository marriageRepository,
-            FillRepository sonRepository,
+            PersonRepository personRepository,
+            MarriageRepository marriageRepository,
+            SonRepository sonRepository,
             DownwardTreeBuilder downwardTreeBuilder,
             UpwardTreeBuilder upwardTreeBuilder)
         {
@@ -62,13 +62,13 @@ namespace GenealogyWeb.Controllers
 
         public IActionResult Index()
         {
-            var persons = _personRepository.GetAll();
+            var people = _personRepository.GetAll();
             var marriages = _marriageRepository.GetAll();
             var sons = _sonRepository.GetAll();
 
-            ViewBag.persons = Utils.GetPersonsSelectList(persons);
-            ViewBag.marriages = Utils.GetMarriagesSelectList(marriages, persons);
-            ViewBag.sons = Utils.GetSonsSelectList(sons, marriages, persons);
+            ViewBag.people = Utils.GetPersonsSelectList(people);
+            ViewBag.marriages = Utils.GetMarriagesSelectList(marriages, people);
+            ViewBag.sons = Utils.GetSonsSelectList(sons, marriages, people);
 
             var result = _downwardTreeBuilder.GetResult();
             var json = JsonConvert.SerializeObject(
@@ -132,7 +132,7 @@ namespace GenealogyWeb.Controllers
             return View(NodeTreeViewName);
         }        
 
-        public ActionResult PersistPerson(Persona person)
+        public ActionResult PersistPerson(Person person)
         {
             if (!ModelState.IsValid)
                 return BadRequest("State is invalid");
@@ -145,7 +145,7 @@ namespace GenealogyWeb.Controllers
             return RedirectToAction(nameof(Person), person);
         }
 
-        public ActionResult PersistMarriage(Matrimoni marriage)
+        public ActionResult PersistMarriage(Marriage marriage)
         {
             if (!ModelState.IsValid)
                 return BadRequest("State is invalid");
@@ -158,7 +158,7 @@ namespace GenealogyWeb.Controllers
             return RedirectToAction(nameof(Marriage), marriage);
         }
 
-        public ActionResult PersistSon(Fill son)
+        public ActionResult PersistSon(Son son)
         {
             if (!ModelState.IsValid)
                 return BadRequest("State is invalid");
@@ -177,7 +177,7 @@ namespace GenealogyWeb.Controllers
             return RedirectToAction(nameof(Person), person);
         }
 
-        public ActionResult Person(Persona person)
+        public ActionResult Person(Person person)
         {
             return View(person);            
         }
@@ -185,14 +185,14 @@ namespace GenealogyWeb.Controllers
         public ActionResult MarriageBySonId(int id)
         {
             var son = _sonRepository.GetById(id);
-            var marriage = _marriageRepository.GetById(son.matrimoni_id);
+            var marriage = _marriageRepository.GetById(son.marriage_id);
             return Marriage(marriage);
         }
 
         public ActionResult MarriageByPersonId(int id)
         {
             var person = _personRepository.GetById(id);
-            if(person.home)
+            if(person.is_male)
             {
                 // MAN:
                 var marriagesByHusband = _marriageRepository.GetAllByHusbandId(id);
@@ -205,7 +205,7 @@ namespace GenealogyWeb.Controllers
                 }
                 else
                 {
-                    return RedirectToAction(nameof(Marriage), new Matrimoni { home_id = id });
+                    return RedirectToAction(nameof(Marriage), new Marriage { husband_id = id });
                 }
             }
             else
@@ -221,7 +221,7 @@ namespace GenealogyWeb.Controllers
                 }
                 else
                 {
-                    return RedirectToAction(nameof(Marriage), new Matrimoni { dona_id = id });
+                    return RedirectToAction(nameof(Marriage), new Marriage { wife_id = id });
                 }
             }            
         }
@@ -236,17 +236,17 @@ namespace GenealogyWeb.Controllers
         {
             var son = _sonRepository.GetByPersonId(id);
             if (son == null)
-                son = new Fill { persona_id = id };
+                son = new Son { person_id = id };
             return RedirectToAction(nameof(Son), son);
         }
 
-        public ActionResult Son(Fill son)
+        public ActionResult Son(Son son)
         {
-            var persons = _personRepository.GetAll();
+            var people = _personRepository.GetAll();
             var marriages = _marriageRepository.GetAll();
 
-            ViewBag.persons = Utils.GetPersonsSelectList(persons);           
-            ViewBag.marriages = Utils.GetMarriagesSelectList(marriages, persons);
+            ViewBag.people = Utils.GetPersonsSelectList(people);           
+            ViewBag.marriages = Utils.GetMarriagesSelectList(marriages, people);
 
             return View(son);
         }
@@ -257,12 +257,12 @@ namespace GenealogyWeb.Controllers
             return RedirectToAction(nameof(Marriage), marriage);
         }
 
-        public ActionResult Marriage(Matrimoni marriage)
+        public ActionResult Marriage(Marriage marriage)
         {
-            var persons = _personRepository.GetAll();
+            var people = _personRepository.GetAll();
 
-            ViewBag.men = Utils.GetPersonsSelectListByGender(persons, isMale: true);
-            ViewBag.women = Utils.GetPersonsSelectListByGender(persons, isMale: false);
+            ViewBag.men = Utils.GetPersonsSelectListByGender(people, isMale: true);
+            ViewBag.women = Utils.GetPersonsSelectListByGender(people, isMale: false);
 
             //if (!ModelState.IsValid)
             //    return View("Marriage", marriage);

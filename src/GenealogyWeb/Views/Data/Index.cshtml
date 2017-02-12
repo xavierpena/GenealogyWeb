@@ -1,5 +1,5 @@
 ﻿@using GenealogyWeb.Controllers
-@model GenealogyWeb.Core.Models.Persona
+@model GenealogyWeb.Core.Models.Person
 
 @{ 
     var dataControllerName = "data";
@@ -12,24 +12,33 @@
 <script>
     $(document).ready(function () {
 
-        $('#persons-selectpicker').change(function () {
-            var personId = $(this).val();
-            addPersonsLinks(personId);
+        $('#people-selectpicker').change(function () {
+            var id = $(this).val();
+            if(id)
+                addPersonsLinks(id);                          
+            else
+                $('#people-links').html('');                              
         });
 
         $('#marriages-selectpicker').change(function () {
-            var personId = $(this).val();
-            addMarriagesLinks(personId);
+            var id = $(this).val();
+            if(id)
+                addMarriagesLinks(id);
+            else
+                $('#marriages-links').html('');
         });
 
         $('#sons-selectpicker').change(function () {
-            var personId = $(this).val();
-            addSonsLinks(personId);
+            var id = $(this).val();
+            if(id)
+                addSonsLinks(id);
+            else
+                $('#sons-links').html('');
         });
 
-        addPersonsLinks($('#persons-selectpicker').val());
-        addMarriagesLinks($('#marriages-selectpicker').val());
-        addSonsLinks($('#sons-selectpicker').val());
+        //addPersonsLinks($('#people-selectpicker').val());
+        //addMarriagesLinks($('#marriages-selectpicker').val());
+        //addSonsLinks($('#sons-selectpicker').val());
 
         function addPersonsLinks(id){
             var url0 = '/@dataControllerName/@nameof(DataController.PersonById)?id=' + id;
@@ -37,7 +46,7 @@
             var url2 = '/@dataControllerName/@nameof(DataController.MarriageByPersonId)?id=' + id;
             var url3 = '/@dataControllerName/@nameof(DataController.PersonDownwardTree)?id=' + id;
             var url4 = '/@dataControllerName/@nameof(DataController.PersonUpwardTree)?id=' + id;            
-            $('#persons-links').html(
+            $('#people-links').html(
                 '<a href="' + url0 + '">✎ edit selected</a>' 
                 + ' | <a href="' + url1 + '" class="askforconfirmation">✗ delete selected</a>' 
                 + ' | <a href="' + url2 + '">✎ edit marriage</a>' 
@@ -91,41 +100,28 @@
     });
 </script>
 
-<!-- node tree -->
-
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/d3/d3.min.js"></script>
-<link rel="stylesheet" href="~/css/nodeTree.css" />
-
-<script>
-    var treeData = @ViewBag.json;
-</script>
-
-<script src="~/js/nodeTree.js"></script>
-
-<!-- node tree -->
-
 <body>
 
-    <h2>Persons</h2>
+    <h2>People</h2>
 
     <div>@Html.ActionLink("+ add new person", nameof(DataController.Person))</div>
 
     <div class="form-group">
         @Html.DropDownListFor(
             m => m.id,
-            new SelectList((List<SelectListItem>)ViewBag.persons, "Value", "Text"),
+            new SelectList((List<SelectListItem>)ViewBag.people, "Value", "Text"),
+            "(Select a person)",
             new
             {
                 @class = "form-control selectpicker",
-                @id = "persons-selectpicker",
+                @id = "people-selectpicker",
                 data_show_subtext = "true",
                 data_live_search = "true"
             }
         )
     </div>
 
-    <div id="persons-links"></div>
+    <div id="people-links"></div>
     
     <hr/>
 
@@ -138,6 +134,7 @@
         @Html.DropDownListFor(
             m => m.id,
             new SelectList((List<SelectListItem>)ViewBag.marriages, "Value", "Text"),
+            "(Select a marriage)",
             new
             {
                 @class = "form-control selectpicker",
@@ -161,6 +158,7 @@
         @Html.DropDownListFor(
             m => m.id,
             new SelectList((List<SelectListItem>)ViewBag.sons, "Value", "Text"),
+            "(Select a son)",
             new
             {
                 @class = "form-control selectpicker",
@@ -181,3 +179,19 @@
     <div id="tree-container"></div>
 
 </body>
+
+
+
+<!-- node tree -->
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/d3/d3.min.js"></script>
+<link rel="stylesheet" href="~/css/nodeTree.css" />
+
+<script>
+    var treeData = @ViewBag.json;
+</script>
+
+<script src="~/js/nodeTree.js"></script>
+
+<!-- node tree -->

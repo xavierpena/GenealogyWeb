@@ -65,9 +65,9 @@ namespace GenealogyWeb
                 .AddDefaultTokenProviders();
 
             // Custom services:
-            services.AddTransient(provider => new PersonaRepository(connStr));
-            services.AddTransient(provider => new MatrimoniRepository(connStr));
-            services.AddTransient(provider => new FillRepository(connStr));
+            services.AddTransient(provider => new PersonRepository(connStr));
+            services.AddTransient(provider => new MarriageRepository(connStr));
+            services.AddTransient(provider => new SonRepository(connStr));
             services.AddTransient<DownwardTreeBuilder>();
             services.AddTransient<UpwardTreeBuilder>();
 

@@ -1,5 +1,5 @@
 ﻿@using GenealogyWeb.Controllers
-@model GenealogyWeb.Core.Models.Matrimoni
+@model GenealogyWeb.Core.Models.Marriage
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
@@ -47,10 +47,11 @@
         @Html.ValidationMessageFor(m => m.id)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.home_id)
+        @Html.LabelFor(m => m.husband_id)
         @Html.DropDownListFor(
-            m => m.home_id,
+            m => m.husband_id,
             new SelectList((List<SelectListItem>)ViewData["men"], "Value", "Text"),
+            "(Select a person)",
             new
             {
                 @class = "form-control selectpicker",
@@ -58,13 +59,14 @@
                 data_live_search = "true"
             }
         )
-        @Html.ValidationMessageFor(m => m.home_id)
+        @Html.ValidationMessageFor(m => m.husband_id)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.dona_id)
+        @Html.LabelFor(m => m.wife_id)
         @Html.DropDownListFor(
-            m => m.dona_id,
+            m => m.wife_id,
             new SelectList((List<SelectListItem>)ViewData["women"], "Value", "Text"),
+            "(Select a person)",
             new
             {
                 @class = "form-control selectpicker",
@@ -72,22 +74,22 @@
                 data_live_search = "true"
             }
         )
-        @Html.ValidationMessageFor(m => m.home_id)
+        @Html.ValidationMessageFor(m => m.wife_id)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.lloc)
-        @Html.TextBoxFor(m => m.lloc, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.lloc)
+        @Html.LabelFor(m => m.place)
+        @Html.TextBoxFor(m => m.place, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.place)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.data)
-        @Html.TextBoxFor(m => m.data, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.data)
+        @Html.LabelFor(m => m.date)
+        @Html.TextBoxFor(m => m.date, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.date)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.observacions)
-        @Html.TextAreaFor(m => m.observacions, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.observacions)
+        @Html.LabelFor(m => m.comments)
+        @Html.TextAreaFor(m => m.comments, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.comments)
     </div>
 
     <button type="submit">Save</button>

@@ -9,11 +9,11 @@ namespace GenealogyWeb.Core.Snippets
 {
     public class PersonDataSanitizer
     {
-        private PersonaRepository _personaRepository;
+        private PersonRepository _personaRepository;
 
         public PersonDataSanitizer(string connStr)
         {
-            _personaRepository = new PersonaRepository(connStr);
+            _personaRepository = new PersonRepository(connStr);
         }
 
         public void Sanitize()
@@ -27,15 +27,15 @@ namespace GenealogyWeb.Core.Snippets
             }
         }
 
-        private void TrimFields(Persona persona)
+        private void TrimFields(Person persona)
         {
-            persona.nom = FirstCharToUpper(persona.nom.Trim());
-            persona.llinatge_1 = FirstCharToUpper(persona.llinatge_1.Trim());
-            persona.llinatge_2 = FirstCharToUpper(persona.llinatge_2.Trim());
-            persona.naixement_data = FirstCharToUpper(persona.naixement_data.Trim());
-            persona.naixement_lloc = FirstCharToUpper(persona.naixement_lloc.Trim());
-            persona.mort_data = persona.mort_data.Trim();
-            persona.mort_lloc = FirstCharToUpper(persona.mort_lloc.Trim());
+            persona.name = FirstCharToUpper(persona.name.Trim());
+            persona.father_surname = FirstCharToUpper(persona.father_surname.Trim());
+            persona.mother_surname = FirstCharToUpper(persona.mother_surname.Trim());
+            persona.birth_date = FirstCharToUpper(persona.birth_date.Trim());
+            persona.birth_place = FirstCharToUpper(persona.birth_place.Trim());
+            persona.death_date = persona.death_date.Trim();
+            persona.death_place = FirstCharToUpper(persona.death_place.Trim());
             persona.info = persona.info.Trim();
         }
 

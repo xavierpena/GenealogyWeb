@@ -1,5 +1,5 @@
 ﻿@using GenealogyWeb.Controllers
-@model GenealogyWeb.Core.Models.Persona
+@model GenealogyWeb.Core.Models.Person
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/js/askForConfirmation.js"></script>
@@ -37,44 +37,44 @@
         @Html.ValidationMessageFor(m => m.id)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.nom)
-        @Html.TextBoxFor(m => m.nom, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.nom)
+        @Html.LabelFor(m => m.name)
+        @Html.TextBoxFor(m => m.name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.name)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.llinatge_1)
-        @Html.TextBoxFor(m => m.llinatge_1, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.llinatge_1)
+        @Html.LabelFor(m => m.father_surname)
+        @Html.TextBoxFor(m => m.father_surname, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.father_surname)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.llinatge_2)
-        @Html.TextBoxFor(m => m.llinatge_2, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.llinatge_2)
+        @Html.LabelFor(m => m.mother_surname)
+        @Html.TextBoxFor(m => m.mother_surname, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.mother_surname)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.home)
-        @Html.CheckBoxFor(m => m.home)
-        @Html.ValidationMessageFor(m => m.home)
+        @Html.LabelFor(m => m.is_male)
+        @Html.CheckBoxFor(m => m.is_male)
+        @Html.ValidationMessageFor(m => m.is_male)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.naixement_data)
-        @Html.TextBoxFor(m => m.naixement_data, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.naixement_data)
+        @Html.LabelFor(m => m.birth_date)
+        @Html.TextBoxFor(m => m.birth_date, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.birth_date)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.naixement_lloc)
-        @Html.TextBoxFor(m => m.naixement_lloc, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.naixement_lloc)
+        @Html.LabelFor(m => m.birth_place)
+        @Html.TextBoxFor(m => m.birth_place, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.birth_place)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.mort_data)
-        @Html.TextBoxFor(m => m.mort_data, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.mort_data)
+        @Html.LabelFor(m => m.death_date)
+        @Html.TextBoxFor(m => m.death_date, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.death_date)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.mort_lloc)
-        @Html.TextBoxFor(m => m.mort_lloc, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.mort_lloc)
+        @Html.LabelFor(m => m.death_place)
+        @Html.TextBoxFor(m => m.death_place, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.death_place)
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.info)
@@ -82,9 +82,9 @@
         @Html.ValidationMessageFor(m => m.info)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.observacions)
-        @Html.TextAreaFor(m => m.observacions, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.observacions)
+        @Html.LabelFor(m => m.comments)
+        @Html.TextAreaFor(m => m.comments, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.comments)
     </div>
 
     <button type="submit">Save</button>
