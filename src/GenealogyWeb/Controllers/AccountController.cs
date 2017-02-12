@@ -62,10 +62,6 @@ namespace GenealogyWeb.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    // !!!
-                    //if (model.Email != "allowed@email.com")
-                    //    RedirectToLocal(returnUrl);
-                    
                     _logger.LogInformation(1, "User logged in.");
                     return RedirectToLocal(returnUrl);
                 }
@@ -95,8 +91,9 @@ namespace GenealogyWeb.Controllers
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return BadRequest("Register is not allowed");
+            //ViewData["ReturnUrl"] = returnUrl;
+            //return View();
         }
 
         //
@@ -106,28 +103,29 @@ namespace GenealogyWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                    // Send an email with this link
-                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                    //    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation(3, "User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
-                }
-                AddErrors(result);
-            }
+            return BadRequest("Register is not allowed");
+            //ViewData["ReturnUrl"] = returnUrl;
+            //if (ModelState.IsValid)
+            //{
+            //    var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            //    var result = await _userManager.CreateAsync(user, model.Password);
+            //    if (result.Succeeded)
+            //    {
+            //        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+            //        // Send an email with this link
+            //        //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            //        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+            //        //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
+            //        //    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
+            //        await _signInManager.SignInAsync(user, isPersistent: false);
+            //        _logger.LogInformation(3, "User created a new account with password.");
+            //        return RedirectToLocal(returnUrl);
+            //    }
+            //    AddErrors(result);
+            //}
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            //// If we got this far, something failed, redisplay form
+            //return View(model);
         }
 
         //

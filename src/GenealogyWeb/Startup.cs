@@ -51,8 +51,7 @@ namespace GenealogyWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connStr = Configuration.GetConnectionString("DefaultConnection");
-
+            var connStr = Configuration.GetConnectionString("DefaultConnection");            
             if (connStr == null)
                 throw new ArgumentNullException("Connection string cannot be null");
 
@@ -63,6 +62,28 @@ namespace GenealogyWeb
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+
+                // Lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                options.Lockout.MaxFailedAccessAttempts = 10;
+
+                // Cookie settings
+                options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(150);
+                options.Cookies.ApplicationCookie.LoginPath = "/Account/LogIn";
+                options.Cookies.ApplicationCookie.LogoutPath = "/Account/LogOff";
+
+                // User settings
+                options.User.RequireUniqueEmail = true;
+            });
 
             // Custom services:
             services.AddTransient(provider => new PersonRepository(connStr));
@@ -142,5 +163,6 @@ namespace GenealogyWeb
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+        
     }
 }
