@@ -56,7 +56,7 @@ namespace GenealogyWeb.Controllers
 
         [HttpGet]
         public ActionResult AddSon()
-            => Son(null);
+            => Son(new Son());
 
         private ActionResult RedirectToMessage(string message, bool success)
             => RedirectToAction(

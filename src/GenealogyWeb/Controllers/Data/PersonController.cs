@@ -55,7 +55,7 @@ namespace GenealogyWeb.Controllers
 
         [HttpGet]
         public ActionResult AddPerson()
-            => Person(null);
+            => Person(new Person());
 
         [HttpPost]
         public ActionResult PersistPerson(Person person)

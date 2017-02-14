@@ -55,7 +55,7 @@ namespace GenealogyWeb.Controllers
 
         [HttpGet]
         public ActionResult AddMarriage()
-            => Marriage(null);
+            => Marriage(new Marriage());
 
         private ActionResult RedirectToMessage(string message, bool success)
             => RedirectToAction(
