@@ -23,7 +23,7 @@
         <div>
             @Html.ActionLink(
                "✗ delete son",
-               nameof(DataController.DeleteSon),
+               nameof(SonController.DeleteSon),
                new { id = Model.id },
                new { @class = "askforconfirmation" }
            )
@@ -39,7 +39,7 @@
 
 <hr/>
 
-@using (Html.BeginForm(nameof(DataController.PersistSon), "Data"))
+@using (Html.BeginForm(nameof(SonController.PersistSon), "Data"))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.id)

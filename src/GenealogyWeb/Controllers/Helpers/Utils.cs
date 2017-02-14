@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GenealogyWeb.Controllers
 {
-    public class Utils
+    public static class Utils
     {
         public static List<SelectListItem> GetPersonsSelectList(IEnumerable<Person> persons)
             => persons

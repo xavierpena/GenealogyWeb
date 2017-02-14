@@ -91,6 +91,7 @@ namespace GenealogyWeb
             services.AddTransient(provider => new SonRepository(connStr));
             services.AddTransient<DownwardTreeBuilder>();
             services.AddTransient<UpwardTreeBuilder>();
+            services.AddTransient<Controllers.NodeTreeController>();
 
             // React:
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

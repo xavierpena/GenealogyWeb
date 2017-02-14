@@ -1,0 +1,213 @@
+﻿@using GenealogyWeb.Controllers
+@model GenealogyWeb.Core.Models.Person
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
+<link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css" />
+
+<script>
+
+    $(document).ready(function () {
+
+        updateLinks();
+
+        $('#people-selectpicker').change(function () {
+            var id = $(this).val();
+            if(id)
+                addPersonsLinks(id);
+            else
+                $('#people-links').html('');
+        });
+
+        $('#marriages-selectpicker').change(function () {
+            var id = $(this).val();
+            if(id)
+                addMarriagesLinks(id);
+            else
+                $('#marriages-links').html('');
+        });
+
+        $('#sons-selectpicker').change(function () {
+            var id = $(this).val();
+            if(id)
+                addSonsLinks(id);
+            else
+                $('#sons-links').html('');
+        });
+
+        //addPersonsLinks($('#people-selectpicker').val());
+        //addMarriagesLinks($('#marriages-selectpicker').val());
+        //addSonsLinks($('#sons-selectpicker').val());
+
+    });
+    
+    function addPersonsLinks(id) {
+        var url0 = '/person/@nameof(PersonController.PersonById)?id=' + id;
+        var url1 = '/person/@nameof(PersonController.DeletePerson)?id=' + id;
+        var url2 = '/marriage/@nameof(MarriageController.MarriageByPersonId)?id=' + id;
+        var url3 = '/NodeTree/@nameof(NodeTreeController.PersonDownwardTree)?id=' + id;
+        var url4 = '/NodeTree/@nameof(NodeTreeController.PersonUpwardTree)?id=' + id;
+        $('#people-links').html(
+                 '<a href="' + url0 + '" class="popitup">✎ edit selected</a>'
+            + ' | <a href="' + url1 + '" class="popitup askforconfirmation">✗ delete selected</a>'
+            + ' | <a href="' + url2 + '" class="popitup">✎ edit marriage</a>'
+            + ' | <a href="' + url3 + '" class="popitup">🡓 show downward tree</a>'
+            + ' | <a href="' + url4 + '" class="popitup">🡑 show upward tree</a>'
+            );
+        updateLinks();
+    }
+
+    function addMarriagesLinks(id) {
+        var url0 = '/marriage/@nameof(MarriageController.MarriageById)?id=' + id;
+        var url1 = '/marriage/@nameof(MarriageController.DeleteMarriage)?id=' + id;
+        $('#marriages-links').html(
+                     '<a href="' + url0 + '" class="popitup">✎ edit selected</a>'
+                + ' | <a href="' + url1 + '" class="popitup askforconfirmation">✗ delete selected</a>'
+            );
+        updateLinks();
+    }
+
+    function addSonsLinks(id) {
+        var url0 = '/son/@nameof(SonController.SonById)?id=' + id;
+        var url1 = '/son/@nameof(SonController.DeleteSon)?id=' + id;
+        var url2 = '/marriage/@nameof(MarriageController.MarriageBySonId)?id=' + id;
+        $('#sons-links').html(
+                     '<a href="' + url0 + '" class="popitup">✎ edit selected</a>'
+                + ' | <a href="' + url1 + '" class="popitup askforconfirmation">✗ delete selected</a>'
+                + ' | <a href="' + url2 + '" class="popitup">✎ edit marriage</a>'
+            );
+        updateLinks();
+    }
+
+    /**
+    * Ask for confirmation
+    **/
+    var handleAskfordelete = function (e) {
+        e.preventDefault();
+
+        var href = this.getAttribute("data-href");
+        var sure = confirm("Are you sure you want to delete this item?");
+        if (!sure) return;
+        document.location = href;
+    }
+
+    /**
+    * Pop link in a new window
+    **/
+    var handlePopitup = function (e) {
+        e.preventDefault();
+        var href = this.getAttribute("data-href");
+        newwindow = window.open(href, 'name', 'height=700,width=1200');
+        if (window.focus) { newwindow.focus() }
+        return false;
+    }
+
+    /**
+    * Scans 'a' elements from particular classes and links them to certain click handlers
+    **/
+    var updateLinks = function () {
+
+        $("a.askforconfirmation")
+            .click(handleAskfordelete)
+            .bind("contextmenu", handleAskfordelete)
+            .dblclick(handleAskfordelete)
+            .each(function () {
+                var href = this.href;
+                this.setAttribute("data-href", href);
+                this.href = "javascript:void('Navigate to " + href.replace("'", "") + "')";
+            })
+
+        $("a.popitup")
+            .click(handlePopitup)
+            .bind("contextmenu", handlePopitup)
+            .dblclick(handlePopitup)
+            .each(function () {
+                var href = this.href;
+                this.setAttribute("data-href", href);
+                this.href = "javascript:void('Navigate to " + href.replace("'", "") + "')";
+            })
+
+    }
+</script>
+
+<body>
+
+    <form id="main-form">
+
+        <h2>People</h2>
+
+        <div>@Html.ActionLink("+ add new person", nameof(PersonController.AddPerson), "person")</div>
+
+        <div class="form-group">
+            @Html.DropDownListFor(
+            m => m.id,
+            new SelectList((List<SelectListItem>)ViewBag.people, "Value", "Text"),
+            "(Select a person)",
+            new
+            {
+                @class = "form-control selectpicker",
+                @id = "people-selectpicker",
+                data_show_subtext = "true",
+                data_live_search = "true"
+            }
+        )
+        </div>
+
+        <div id="people-links"></div>
+
+        <hr />
+
+
+        <h2>Marriages</h2>
+
+        <div>@Html.ActionLink("+ add new marriage", nameof(MarriageController.AddMarriage), "marriage")</div>
+
+        <div class="form-group">
+            @Html.DropDownListFor(
+            m => m.id,
+            new SelectList((List<SelectListItem>)ViewBag.marriages, "Value", "Text"),
+            "(Select a marriage)",
+            new
+            {
+                @class = "form-control selectpicker",
+                @id = "marriages-selectpicker",
+                data_show_subtext = "true",
+                data_live_search = "true"
+            }
+        )
+        </div>
+
+        <div id="marriages-links"></div>
+
+        <hr />
+
+
+        <h2>Sons</h2>
+
+        <div>@Html.ActionLink("+ add new son", nameof(SonController.AddSon), "son")</div>
+
+        <div class="form-group">
+            @Html.DropDownListFor(
+            m => m.id,
+            new SelectList((List<SelectListItem>)ViewBag.sons, "Value", "Text"),
+            "(Select a son)",
+            new
+            {
+                @class = "form-control selectpicker",
+                @id = "sons-selectpicker",
+                data_show_subtext = "true",
+                data_live_search = "true"
+            }
+        )
+        </div>
+
+        <div id="sons-links"></div>
+
+    </form>
+
+    <hr />
+
+    <a href="/nodetree/DownwardTree" class="btn btn-lg btn-primary popitup"><span class="glyphicon glyphicon-tree-deciduous"></span> Show full tree</a>
+
+</body>
+

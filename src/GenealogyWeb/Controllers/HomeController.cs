@@ -21,7 +21,7 @@ namespace GenealogyWeb.Controllers
             }
 
             if (isAllowed)
-                return RedirectToAction(nameof(DataController.Index), "Data");
+                return RedirectToAction(nameof(MainController.Index), "Main");
             else
                 return View();            
         }

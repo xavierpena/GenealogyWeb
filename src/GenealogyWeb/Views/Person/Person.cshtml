@@ -10,11 +10,11 @@
     if (Model.id.HasValue)
     {
         <div>
-            @Html.ActionLink("✗ delete person", nameof(DataController.DeletePerson), new { id = Model.id }, new { @class = "askforconfirmation" })
-            | @Html.ActionLink("✎ edit marriage", nameof(DataController.MarriageByPersonId), new { id = Model.id })
-            | @Html.ActionLink("✎ edit parents", nameof(DataController.SonByPersonId), new { id = Model.id })
-            | @Html.ActionLink("🡓 show downward tree", nameof(DataController.PersonDownwardTree), new { id = Model.id })
-            | @Html.ActionLink("🡑 show upward tree", nameof(DataController.PersonUpwardTree), new { id = Model.id })
+            @Html.ActionLink("✗ delete person", nameof(PersonController.DeletePerson), new { id = Model.id }, new { @class = "askforconfirmation" })
+            | @Html.ActionLink("✎ edit marriage", nameof(MarriageController.MarriageByPersonId), "marriage", new { id = Model.id })
+            | @Html.ActionLink("✎ edit parents", nameof(SonController.SonByPersonId), "son", new { id = Model.id })
+            | @Html.ActionLink("🡓 show downward tree", nameof(NodeTreeController.PersonDownwardTree), "nodetree", new { id = Model.id })
+            | @Html.ActionLink("🡑 show upward tree", nameof(NodeTreeController.PersonUpwardTree), "nodetree", new { id = Model.id })
         </div>
     }
     else
@@ -29,7 +29,7 @@
 <hr />
 
 
-@using (Html.BeginForm(nameof(DataController.PersistPerson), "Data"))
+@using (Html.BeginForm(nameof(PersonController.PersistPerson), "Data"))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.id)
