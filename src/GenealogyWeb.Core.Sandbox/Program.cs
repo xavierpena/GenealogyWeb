@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using GenealogyWeb.Core.Repositories;
 using GenealogyWeb.Core.Business.DownwardTree;
 using GenealogyWeb.Core.Business.UpwardTree;
+using GenealogyWeb.Core.Models;
 
 namespace GenealogyWeb.Core.Sandbox
 {
@@ -24,9 +25,13 @@ namespace GenealogyWeb.Core.Sandbox
             Startup();
             ConfigureServices();
 
-            // TEST:
-            var dataTreeTests = ServiceProvider.GetService<DataTreeTests>();
-            dataTreeTests.Process();
+            //// TEST:
+            //var dataTreeTests = ServiceProvider.GetService<DataTreeTests>();
+            //dataTreeTests.Process();
+
+            var personRepository = ServiceProvider.GetService<PersonRepository>();
+            var person = new Person { name = "Test" };
+            var id = personRepository.Add(person);
         }
 
         private static void Startup()

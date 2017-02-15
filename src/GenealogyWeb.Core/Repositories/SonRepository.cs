@@ -66,9 +66,9 @@ namespace GenealogyWeb.Core.Repositories
 
         private object GetObj(Son son) => new
         {
-            nom = son.marriage_id,
-            llinatge_1 = son.person_id,
-            llinatge_2 = son.comments
+            marriage_id = son.marriage_id,
+            person_id = son.person_id,
+            comments = son.comments
         };
 
         #endregion

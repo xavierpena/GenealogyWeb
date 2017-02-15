@@ -84,11 +84,12 @@
     **/
     var handleAskfordelete = function (e) {
         e.preventDefault();
-
-        var href = this.getAttribute("data-href");
+        var href = this.getAttribute("dataHref");
         var sure = confirm("Are you sure you want to delete this item?");
         if (!sure) return;
-        document.location = href;
+        // Redirect only if 'popitup' is not active:
+        if (!this.classList.contains("popitup"))
+            document.location = href;
     }
 
     /**
@@ -96,25 +97,29 @@
     **/
     var handlePopitup = function (e) {
         e.preventDefault();
-        var href = this.getAttribute("data-href");
+        var href = this.getAttribute("dataHref");
         newwindow = window.open(href, 'name', 'height=700,width=1200');
         if (window.focus) { newwindow.focus() }
         return false;
     }
 
     /**
-    * Scans 'a' elements from particular classes and links them to certain click handlers
+    * Scans the 'a' elements from particular classes and links them to certain click handlers
     **/
-    var updateLinks = function () {
+    var updateLinks = function () {        
 
+        // Before (must be executed before popitup):
         $("a.askforconfirmation")
             .click(handleAskfordelete)
             .bind("contextmenu", handleAskfordelete)
             .dblclick(handleAskfordelete)
             .each(function () {
-                var href = this.href;
-                this.setAttribute("data-href", href);
-                this.href = "javascript:void('Navigate to " + href.replace("'", "") + "')";
+                var dataHref = this.getAttribute("dataHref");
+                if (!dataHref) {
+                    var href = this.href;
+                    this.setAttribute("dataHref", href);
+                    this.href = "javascript:void('Navigate to " + href.replace("'", "") + "')";
+                }
             })
 
         $("a.popitup")
@@ -122,9 +127,12 @@
             .bind("contextmenu", handlePopitup)
             .dblclick(handlePopitup)
             .each(function () {
-                var href = this.href;
-                this.setAttribute("data-href", href);
-                this.href = "javascript:void('Navigate to " + href.replace("'", "") + "')";
+                var dataHref = this.getAttribute("dataHref");
+                if (!dataHref) {
+                    var href = this.href;
+                    this.setAttribute("dataHref", href);
+                    this.href = "javascript:void('Navigate to " + href.replace("'", "") + "')";
+                }
             })
 
     }
@@ -136,7 +144,7 @@
 
         <h2>People</h2>
 
-        <div>@Html.ActionLink("+ add new person", nameof(PersonController.AddPerson), "person")</div>
+        <div>@Html.ActionLink("+ add new person", nameof(PersonController.AddPerson), "person", null, new { @class = "popitup" })</div>
 
         <div class="form-group">
             @Html.DropDownListFor(
@@ -160,7 +168,7 @@
 
         <h2>Marriages</h2>
 
-        <div>@Html.ActionLink("+ add new marriage", nameof(MarriageController.AddMarriage), "marriage")</div>
+        <div>@Html.ActionLink("+ add new marriage", nameof(MarriageController.AddMarriage), "marriage", null, new { @class = "popitup" })</div>
 
         <div class="form-group">
             @Html.DropDownListFor(
@@ -184,7 +192,7 @@
 
         <h2>Sons</h2>
 
-        <div>@Html.ActionLink("+ add new son", nameof(SonController.AddSon), "son")</div>
+        <div>@Html.ActionLink("+ add new son", nameof(SonController.AddSon), "son", null, new { @class = "popitup" })</div>
 
         <div class="form-group">
             @Html.DropDownListFor(

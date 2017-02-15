@@ -67,11 +67,11 @@ namespace GenealogyWeb.Core.Repositories
 
         private object GetObj(Marriage marriage) => new
         {
-            nom = marriage.husband_id,
-            llinatge_1 = marriage.wife_id,
-            llinatge_2 = marriage.date,
-            naixement_data = marriage.place,
-            naixement_lloc = marriage.comments
+            husband_id = marriage.husband_id,
+            wife_id = marriage.wife_id,
+            date = marriage.date,
+            place = marriage.place,
+            comments = marriage.comments
         };
 
         #endregion

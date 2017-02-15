@@ -36,14 +36,14 @@
     else
     {
         <div class="alert alert-info">
-            <strong>Info:</strong> create a new marriage.
+            Create a new marriage.
         </div>
     }
 }
 
 <hr />
 
-@using (Html.BeginForm(nameof(MarriageController.PersistMarriage), "Data"))
+@using (Html.BeginForm(nameof(MarriageController.PersistMarriage), "marriage"))
 {    
     <div class="form-group">
         @Html.LabelFor(m => m.id)

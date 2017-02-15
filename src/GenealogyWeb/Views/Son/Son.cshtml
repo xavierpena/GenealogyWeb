@@ -36,14 +36,14 @@
     else
     {
         <div class="alert alert-info">
-            <strong>Info:</strong> create a new son.
+            Create a new son.
         </div>
     }
 }
 
 <hr/>
 
-@using (Html.BeginForm(nameof(SonController.PersistSon), "Data"))
+@using (Html.BeginForm(nameof(SonController.PersistSon), "son"))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.id)

@@ -68,6 +68,8 @@ namespace GenealogyWeb.Controllers
             else
                 _personRepository.Update(person);
 
+            ModelState.Clear();
+
             return Person(person);
         }
 

@@ -24,16 +24,15 @@
     else
     {
         <div class="alert alert-info">
-            <strong>Info:</strong> create a new person.
+            Create a new person.
         </div>
     }
 }
 
-
 <hr />
 
 
-@using (Html.BeginForm(nameof(PersonController.PersistPerson), "Data"))
+@using (Html.BeginForm(nameof(PersonController.PersistPerson), "person"))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.id)

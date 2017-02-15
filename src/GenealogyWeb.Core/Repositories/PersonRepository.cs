@@ -89,19 +89,21 @@ namespace GenealogyWeb.Core.Repositories
                     nameof(Person.birth_place),
                     nameof(Person.death_date),
                     nameof(Person.death_place),
-                    nameof(Person.info)
+                    nameof(Person.info),
+                    nameof(Person.comments)
                 };
 
         private object GetObj(Person person) => new
         {
-            nom = person.name,
-            llinatge_1 = person.father_surname,
-            llinatge_2 = person.mother_surname,
-            naixement_data = person.birth_date,
-            naixement_lloc = person.birth_place,
-            mort_data = person.death_date,
-            mort_lloc = person.death_place,
-            info = person.info
+            name = person.name,
+            father_surname = person.father_surname,
+            mother_surname = person.mother_surname,
+            birth_date = person.birth_date,
+            birth_place = person.birth_place,
+            death_date = person.death_date,
+            death_place = person.death_place,
+            info = person.info,
+            comments = person.comments
         };
 
         #endregion
