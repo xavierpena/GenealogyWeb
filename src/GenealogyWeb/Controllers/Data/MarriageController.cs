@@ -75,25 +75,27 @@ namespace GenealogyWeb.Controllers
             else
                 _marriageRepository.Update(marriage);
 
+            ModelState.Clear();
+
             return Marriage(marriage);
         }
 
         [HttpGet]
-        public ActionResult MarriageBySonId(int id)
+        public ActionResult MarriageBySonId(int sonId)
         {
-            var son = _sonRepository.GetById(id);
+            var son = _sonRepository.GetById(sonId);
             var marriage = _marriageRepository.GetById(son.marriage_id);
             return Marriage(marriage);
         }     
 
         [HttpGet]
-        public ActionResult MarriageByPersonId(int id)
+        public ActionResult MarriageByPersonId(int personId)
         {
-            var person = _personRepository.GetById(id);
+            var person = _personRepository.GetById(personId);
             if(person.is_male)
             {
                 // MAN:
-                var marriagesByHusband = _marriageRepository.GetAllByHusbandId(id);
+                var marriagesByHusband = _marriageRepository.GetAllByHusbandId(personId);
                 if (marriagesByHusband.Any())
                 {
                     if (marriagesByHusband.Count() == 1)
@@ -103,14 +105,14 @@ namespace GenealogyWeb.Controllers
                 }
                 else
                 {
-                    var marriage = new Marriage { husband_id = id };
+                    var marriage = new Marriage { husband_id = personId };
                     return Marriage(marriage);
                 }
             }
             else
             {
                 // WOMAN:
-                var marriagesByWife = _marriageRepository.GetAllByWifeId(id);
+                var marriagesByWife = _marriageRepository.GetAllByWifeId(personId);
                 if (marriagesByWife.Any())
                 {
                     if (marriagesByWife.Count() == 1)
@@ -120,7 +122,7 @@ namespace GenealogyWeb.Controllers
                 }
                 else
                 {
-                    var marriage = new Marriage { wife_id = id };
+                    var marriage = new Marriage { wife_id = personId };
                     return Marriage(marriage);
                 }
             }            

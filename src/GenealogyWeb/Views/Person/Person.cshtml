@@ -11,26 +11,15 @@
 <br/>
 
 @{
-    if (Model.id.HasValue)
-    {
-        <div>
-            @Html.ActionLink("✗ delete person", nameof(PersonController.DeletePerson), new { id = Model.id }, new { @class = "askforconfirmation" })
-            | @Html.ActionLink("✎ edit marriage", nameof(MarriageController.MarriageByPersonId), "marriage", new { id = Model.id })
-            | @Html.ActionLink("✎ edit parents", nameof(SonController.SonByPersonId), "son", new { id = Model.id })
-            | @Html.ActionLink("🡓 show downward tree", nameof(NodeTreeController.PersonDownwardTree), "nodetree", new { id = Model.id })
-            | @Html.ActionLink("🡑 show upward tree", nameof(NodeTreeController.PersonUpwardTree), "nodetree", new { id = Model.id })
-        </div>
-    }
-    else
+    if (!Model.id.HasValue)
     {
         <div class="alert alert-info">
             Create a new person.
         </div>
+
+        <hr />
     }
 }
-
-<hr />
-
 
 @using (Html.BeginForm(nameof(PersonController.PersistPerson), "person"))
 {

@@ -40,19 +40,21 @@
         //addSonsLinks($('#sons-selectpicker').val());
 
     });
-    
+
     function addPersonsLinks(id) {
         var url0 = '/person/@nameof(PersonController.PersonById)?id=' + id;
         var url1 = '/person/@nameof(PersonController.DeletePerson)?id=' + id;
-        var url2 = '/marriage/@nameof(MarriageController.MarriageByPersonId)?id=' + id;
-        var url3 = '/NodeTree/@nameof(NodeTreeController.PersonDownwardTree)?id=' + id;
-        var url4 = '/NodeTree/@nameof(NodeTreeController.PersonUpwardTree)?id=' + id;
+        var url2 = '/marriage/@nameof(MarriageController.MarriageByPersonId)?personId=' + id;
+        var url3 = '/son/@nameof(SonController.SonByPersonId)?personId=' + id;
+        var url4 = '/NodeTree/@nameof(NodeTreeController.PersonDownwardTree)?id=' + id;
+        var url5 = '/NodeTree/@nameof(NodeTreeController.PersonUpwardTree)?id=' + id;
         $('#people-links').html(
                  '<a href="' + url0 + '" class="popitup">✎ edit selected</a>'
             + ' | <a href="' + url1 + '" class="popitup askforconfirmation">✗ delete selected</a>'
-            + ' | <a href="' + url2 + '" class="popitup">✎ edit marriage</a>'
-            + ' | <a href="' + url3 + '" class="popitup">🡓 show downward tree</a>'
-            + ' | <a href="' + url4 + '" class="popitup">🡑 show upward tree</a>'
+            + ' | <a href="' + url2 + '" class="popitup">✎ marriage (edit / add)</a>'
+            + ' | <a href="' + url3 + '" class="popitup">✎ parents (edit / add)</a>'
+            + ' | <a href="' + url4 + '" class="popitup">🡓 downward tree</a>'
+            + ' | <a href="' + url5 + '" class="popitup">🡑 upward tree</a>'
             );
         updateLinks();
     }
@@ -106,7 +108,7 @@
     /**
     * Scans the 'a' elements from particular classes and links them to certain click handlers
     **/
-    var updateLinks = function () {        
+    var updateLinks = function () {
 
         // Before (must be executed before popitup):
         $("a.askforconfirmation")

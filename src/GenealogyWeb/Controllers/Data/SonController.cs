@@ -76,6 +76,8 @@ namespace GenealogyWeb.Controllers
             else
                 _sonRepository.Update(son);
 
+            ModelState.Clear();
+
             return Son(son);
         }
 
@@ -87,11 +89,11 @@ namespace GenealogyWeb.Controllers
         }
 
         [HttpGet]
-        public ActionResult SonByPersonId(int id)
+        public ActionResult SonByPersonId(int personId)
         {
-            var son = _sonRepository.GetByPersonId(id);
+            var son = _sonRepository.GetByPersonId(personId);
             if (son == null)
-                son = new Son { person_id = id };
+                son = new Son { person_id = personId };
             return Son(son);
         }
         

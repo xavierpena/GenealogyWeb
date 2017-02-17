@@ -22,26 +22,15 @@
 <br />
 
 @{
-    if (Model.id.HasValue)
-    {
-        <div>
-            @Html.ActionLink(
-               "✗ delete marriage", 
-               nameof(MarriageController.DeleteMarriage), 
-               new { id = Model.id }, 
-               new {@class = "askforconfirmation" }
-           )
-        </div>
-    }
-    else
+    if (!Model.id.HasValue)
     {
         <div class="alert alert-info">
             Create a new marriage.
         </div>
+
+        <hr />
     }
 }
-
-<hr />
 
 @using (Html.BeginForm(nameof(MarriageController.PersistMarriage), "marriage"))
 {    
