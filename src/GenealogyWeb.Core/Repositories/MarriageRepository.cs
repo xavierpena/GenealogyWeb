@@ -50,7 +50,7 @@ namespace GenealogyWeb.Core.Repositories
         public void Update(Marriage marriage)
             => _db.Execute(
                       $"UPDATE {TableName}"
-                      + $" SET {string.Join(",", GetNames().Select(x => $"{x}=@{x}"))})"
+                      + $" SET {string.Join(",", GetNames().Select(x => $"{x}=@{x}"))}"
                       + $" WHERE {nameof(Marriage.id)}={marriage.id}",
                       GetObj(marriage)
                   );

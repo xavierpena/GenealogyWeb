@@ -51,7 +51,7 @@ namespace GenealogyWeb.Core.Repositories
         public void Update(Son son)
             => _db.Execute(
                       $"UPDATE {TableName}"
-                      + $" SET {string.Join(",", GetNames().Select(x => $"{x}=@{x}"))})"
+                      + $" SET {string.Join(",", GetNames().Select(x => $"{x}=@{x}"))}"
                       + $" WHERE {nameof(Son.id)}={son.id}",
                       GetObj(son)
                   );

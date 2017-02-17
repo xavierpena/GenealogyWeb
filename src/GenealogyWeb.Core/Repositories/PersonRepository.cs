@@ -74,7 +74,7 @@ namespace GenealogyWeb.Core.Repositories
         public void Update(Person person)
             => _db.Execute(
                       $"UPDATE {TableName}"
-                      + $" SET {string.Join(",", GetNames().Select(x => $"{x}=@{x}"))})"
+                      + $" SET {string.Join(",", GetNames().Select(x => $"{x}=@{x}"))}"
                       + $" WHERE {nameof(Person.id)}={person.id}",
                       GetObj(person)
                   );
@@ -85,6 +85,7 @@ namespace GenealogyWeb.Core.Repositories
                     nameof(Person.name),
                     nameof(Person.father_surname),
                     nameof(Person.mother_surname),
+                    nameof(Person.is_male),
                     nameof(Person.birth_date),
                     nameof(Person.birth_place),
                     nameof(Person.death_date),
@@ -98,6 +99,7 @@ namespace GenealogyWeb.Core.Repositories
             name = person.name,
             father_surname = person.father_surname,
             mother_surname = person.mother_surname,
+            is_male = person.is_male,
             birth_date = person.birth_date,
             birth_place = person.birth_place,
             death_date = person.death_date,

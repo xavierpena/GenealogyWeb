@@ -31,7 +31,7 @@ namespace GenealogyWeb.Core.Models
         [Display(Name = "Comments")]
         public string comments { get; set; }
 
-        public string FullName { get { return $"{name}/{father_surname}/{mother_surname} (id={id})"; } }
+        public string FullName { get { return $"{ (is_male ? "♂" : "♀") } {name}/{father_surname}/{mother_surname} (id={id})"; } }
 
         // ===
 
