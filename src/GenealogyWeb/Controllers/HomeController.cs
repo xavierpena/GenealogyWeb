@@ -12,15 +12,9 @@ namespace GenealogyWeb.Controllers
         public IActionResult Index()
         {
             var isAuthenticated = User.Identity.IsAuthenticated;
+            var isAdmin = User.IsInRole("Admin");
 
-            var isAllowed = false;
-            if(isAuthenticated)
-            {
-                if (User.Identity.Name == "xavierpenya@gmail.com" || User.Identity.Name == "joana.pinya@gmail.com")
-                    isAllowed = true;
-            }
-
-            if (isAllowed)
+            if (isAuthenticated && isAdmin)
                 return RedirectToAction(nameof(MainController.Index), "Main");
             else
                 return View();            

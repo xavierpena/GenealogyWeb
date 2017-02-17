@@ -23,6 +23,7 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.HttpOverrides;
 using GenealogyWeb.Core.Business.DownwardTree;
 using GenealogyWeb.Core.Business.UpwardTree;
+using Microsoft.AspNetCore.Identity;
 
 namespace GenealogyWeb
 {
@@ -101,7 +102,7 @@ namespace GenealogyWeb
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<ISmsSender, AuthMessageSender>();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -163,7 +164,59 @@ namespace GenealogyWeb
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            //// !!!
+            //// Add poweruser and user roles:
+            //var serviceProvider = app.ApplicationServices.GetService<IServiceProvider>();
+            //CreateRoles(serviceProvider).Wait();
         }
-        
+
+        private async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            //adding customs roles : Question 1
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleNames = new string[] { "Admin", "User" };
+            var roleResult = default(IdentityResult);
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    //create the roles and seed them to the database: Question 2
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            //Here you could create a super user who will maintain the web app
+            var poweruser = new ApplicationUser
+            {
+                UserName = Configuration["AppSettings:UserName"],
+                Email = Configuration["AppSettings:UserEmail"],
+            };
+
+            string userPWD = Configuration["AppSettings:UserPassword"];
+            var _user = await UserManager.FindByEmailAsync(Configuration["AppSettings:AdminUserEmail"]);
+
+            if (_user == null)
+            {
+                var createPowerUser = await UserManager.CreateAsync(poweruser, userPWD);
+                if (createPowerUser.Succeeded)
+                {
+                    //here we tie the new user to the role : Question 3
+                    await UserManager.AddToRoleAsync(poweruser, "Admin");
+
+                }
+            }
+            else
+            {
+                var roles = await UserManager.GetRolesAsync(_user);
+                if(!roles.Any())
+                {
+                    await UserManager.AddToRoleAsync(_user, "Admin");
+                }
+            }
+        }
     }
 }

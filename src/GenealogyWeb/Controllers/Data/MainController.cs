@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace GenealogyWeb.Controllers
 {
 
-    //[Authorize]
+    [Authorize(Roles = "Admin")]
     public class MainController : Controller
     {
         private const string NodeTreeViewName = "NodeTree";
@@ -30,7 +30,7 @@ namespace GenealogyWeb.Controllers
         private PersonRepository _personRepository;
         private MarriageRepository _marriageRepository;
         private SonRepository _sonRepository;
- 
+        
         public MainController(
             UserManager<ApplicationUser> userManager,
             ILoggerFactory loggerFactory,

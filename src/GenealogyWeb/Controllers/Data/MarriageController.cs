@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace GenealogyWeb.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class MarriageController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
