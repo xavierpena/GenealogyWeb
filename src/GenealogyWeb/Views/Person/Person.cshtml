@@ -8,7 +8,15 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/js/askForConfirmation.js"></script>
 
-<br/>
+<br />
+
+<a href="/Main" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-arrow-right"></span>  Go to main page</a>
+
+<br />
+
+<hr/>
+
+<br />
 
 @{
     if (!Model.id.HasValue)
@@ -16,8 +24,7 @@
         <div class="alert alert-info">
             Create a new person.
         </div>
-
-        <hr />
+        <br />
     }
 }
 
@@ -79,5 +86,5 @@
         @Html.ValidationMessageFor(m => m.comments)
     </div>
 
-    <button type="submit">Save</button>
+    <button type="submit" class="btn btn-primary">Save / Update</button>
 }

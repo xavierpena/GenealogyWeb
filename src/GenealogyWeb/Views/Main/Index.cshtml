@@ -49,12 +49,12 @@
         var url4 = '/NodeTree/@nameof(NodeTreeController.PersonDownwardTree)?id=' + id;
         var url5 = '/NodeTree/@nameof(NodeTreeController.PersonUpwardTree)?id=' + id;
         $('#people-links').html(
-                 '<a href="' + url0 + '" class="popitup">✎ edit selected</a>'
-            + ' | <a href="' + url1 + '" class="popitup askforconfirmation">✗ delete selected</a>'
-            + ' | <a href="' + url2 + '" class="popitup">✎ marriage (edit / add)</a>'
-            + ' | <a href="' + url3 + '" class="popitup">✎ parents (edit / add)</a>'
-            + ' | <a href="' + url4 + '" class="popitup">🡓 downward tree</a>'
-            + ' | <a href="' + url5 + '" class="popitup">🡑 upward tree</a>'
+                 '<a href="' + url0 + '">✎ edit selected</a>'
+            + ' | <a href="' + url1 + '" class="askforconfirmation">✗ delete selected</a>'
+            + ' | <a href="' + url2 + '">✎ marriage (edit / add)</a>'
+            + ' | <a href="' + url3 + '">✎ parents (edit / add)</a>'
+            + ' | <a href="' + url4 + '">🡓 downward tree</a>'
+            + ' | <a href="' + url5 + '">🡑 upward tree</a>'
             );
         updateLinks();
     }
@@ -63,8 +63,8 @@
         var url0 = '/marriage/@nameof(MarriageController.MarriageById)?id=' + id;
         var url1 = '/marriage/@nameof(MarriageController.DeleteMarriage)?id=' + id;
         $('#marriages-links').html(
-                     '<a href="' + url0 + '" class="popitup">✎ edit selected</a>'
-                + ' | <a href="' + url1 + '" class="popitup askforconfirmation">✗ delete selected</a>'
+                     '<a href="' + url0 + '">✎ edit selected</a>'
+                + ' | <a href="' + url1 + '" class="askforconfirmation">✗ delete selected</a>'
             );
         updateLinks();
     }
@@ -72,11 +72,9 @@
     function addSonsLinks(id) {
         var url0 = '/son/@nameof(SonController.SonById)?id=' + id;
         var url1 = '/son/@nameof(SonController.DeleteSon)?id=' + id;
-        var url2 = '/marriage/@nameof(MarriageController.MarriageBySonId)?id=' + id;
         $('#sons-links').html(
-                     '<a href="' + url0 + '" class="popitup">✎ edit selected</a>'
-                + ' | <a href="' + url1 + '" class="popitup askforconfirmation">✗ delete selected</a>'
-                + ' | <a href="' + url2 + '" class="popitup">✎ edit marriage</a>'
+                     '<a href="' + url0 + '">✎ edit selected</a>'
+                + ' | <a href="' + url1 + '" class="askforconfirmation">✗ delete selected</a>'
             );
         updateLinks();
     }
@@ -95,22 +93,9 @@
     }
 
     /**
-    * Pop link in a new window
-    **/
-    var handlePopitup = function (e) {
-        e.preventDefault();
-        var href = this.getAttribute("dataHref");
-        newwindow = window.open(href, 'name', 'height=700,width=1200');
-        if (window.focus) { newwindow.focus() }
-        return false;
-    }
-
-    /**
     * Scans the 'a' elements from particular classes and links them to certain click handlers
     **/
     var updateLinks = function () {
-
-        // Before (must be executed before popitup):
         $("a.askforconfirmation")
             .click(handleAskfordelete)
             .bind("contextmenu", handleAskfordelete)
@@ -123,31 +108,16 @@
                     this.href = "javascript:void('Navigate to " + href.replace("'", "") + "')";
                 }
             })
-
-        $("a.popitup")
-            .click(handlePopitup)
-            .bind("contextmenu", handlePopitup)
-            .dblclick(handlePopitup)
-            .each(function () {
-                var dataHref = this.getAttribute("dataHref");
-                if (!dataHref) {
-                    var href = this.href;
-                    this.setAttribute("dataHref", href);
-                    this.href = "javascript:void('Navigate to " + href.replace("'", "") + "')";
-                }
-            })
-
     }
 </script>
 
 <body>
 
     <br/>
-    <div>(last update @@ @DateTime.Now.ToString("HH:mm"))</div>
 
     <form id="main-form">
 
-        <h2>People</h2>
+        <h2>👤 People</h2>               
 
         <div>@Html.ActionLink("+ add new person", nameof(PersonController.AddPerson), "person", null, new { @class = "popitup" })</div>
 
@@ -168,10 +138,11 @@
 
         <div id="people-links"></div>
 
-        <hr />
+
+        <br />        
 
 
-        <h2>Marriages</h2>
+        <h2>⚭ Marriages</h2>
 
         <div>@Html.ActionLink("+ add new marriage", nameof(MarriageController.AddMarriage), "marriage", null, new { @class = "popitup" })</div>
 
@@ -192,10 +163,11 @@
 
         <div id="marriages-links"></div>
 
-        <hr />
+
+        <br />
 
 
-        <h2>Sons</h2>
+        <h2>👪 Sons</h2>
 
         <div>@Html.ActionLink("+ add new son", nameof(SonController.AddSon), "son", null, new { @class = "popitup" })</div>
 
@@ -218,9 +190,13 @@
 
     </form>
 
-    <hr />
+
+    <br />
+    <br />
+
 
     <a href="/nodetree/DownwardTree" class="btn btn-lg btn-primary popitup"><span class="glyphicon glyphicon-tree-deciduous"></span> Show full tree</a>
+
 
 </body>
 
