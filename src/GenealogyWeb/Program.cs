@@ -21,7 +21,8 @@ namespace GenealogyWeb
                 .UseKestrel()
                 .UseConfiguration(config)
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()                .UseStartup<Startup>()
+                .UseIISIntegration()                
+                .UseStartup<Startup>()
                 .Build();
 
             host.Run();
