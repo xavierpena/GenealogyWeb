@@ -55,11 +55,37 @@ namespace GenealogyWeb.Core.Business.DownwardTree
                 var person = _persons.Where(x => x.id == id).Single();
                 topLevelPersonNodes.Add(GetDeepNode(person));
             }
-
+            
             var topNode = new JsonItem("results");
             topNode.AddChildren(topLevelPersonNodes.ToArray());
 
+            var totalDepth = AssignNodeDepthsRecursivelly(topNode);
+
             return topNode;
+        }
+
+        /// <summary>
+        /// Gets the number of chained children from its longest branch.
+        /// </summary>
+        private static int AssignNodeDepthsRecursivelly(JsonItem node, int accumulatedDepth = 0)
+        {
+            var updatedAccumulatedDepth = accumulatedDepth;
+            if (node.children != null && node.children.Any())
+            {
+                // Has children:
+                accumulatedDepth++;
+
+                foreach (var child in node.children)
+                {
+                    var childDepth = AssignNodeDepthsRecursivelly(child, accumulatedDepth);
+                    if (updatedAccumulatedDepth < childDepth)
+                        updatedAccumulatedDepth = childDepth;
+                }
+            }
+
+            node.nodeDepth = updatedAccumulatedDepth;
+
+            return updatedAccumulatedDepth;
         }
 
         private List<int?> GetTopLevelPersonIds()

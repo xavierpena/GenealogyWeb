@@ -1,15 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E9CAE93D-3924-40D9-A0CE-5FA6FAD6647A}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenealogyWeb", "GenealogyWeb\GenealogyWeb.csproj", "{05F82EC9-1090-452E-B545-8245042A0321}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GenealogyWeb", "GenealogyWeb\GenealogyWeb.xproj", "{05F82EC9-1090-452E-B545-8245042A0321}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenealogyWeb.Core", "GenealogyWeb.Core\GenealogyWeb.Core.csproj", "{5BCF942E-9420-485A-A233-3CF4B676CA37}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GenealogyWeb.Core", "GenealogyWeb.Core\GenealogyWeb.Core.xproj", "{5BCF942E-9420-485A-A233-3CF4B676CA37}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenealogyWeb.Core.Sandbox", "GenealogyWeb.Core.Sandbox\GenealogyWeb.Core.Sandbox.csproj", "{47AED3A0-9846-48DD-BDF7-CCB410689DC4}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GenealogyWeb.Core.Sandbox", "GenealogyWeb.Core.Sandbox\GenealogyWeb.Core.Sandbox.xproj", "{47AED3A0-9846-48DD-BDF7-CCB410689DC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

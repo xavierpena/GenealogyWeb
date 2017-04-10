@@ -7,6 +7,7 @@ namespace GenealogyWeb.Core.Business
 {
     public class JsonItem
     {
+        public int nodeDepth { get; set; } = 0;
         public string name { get; set; }
         public List<JsonItem> children { get; set; }
 

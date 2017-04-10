@@ -51,19 +51,21 @@ visit(treeData, function (d) {
     return d.children && d.children.length > 0 ? d.children : null;
 });
 
-
-// sort the tree according to the node names
-
+// !!!
 function sortTree() {
     tree.sort(function (a, b) {
-        return b.name.toLowerCase() < a.name.toLowerCase() ? 1 : -1;
+        // Sort the tree according to the node names:
+        //return b.name.toLowerCase() < a.name.toLowerCase() ? 1 : -1;
+
+        // Sort the tree nodes according the node depth:
+        return b.nodeDepth - a.nodeDepth;
     });
 }
+
 // Sort the tree initially incase the JSON isn't in a sorted order.
 sortTree();
 
 // Define the zoom function for the zoomable tree
-
 function zoom() {
     svgGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 }
@@ -163,16 +165,16 @@ function update(source) {
         }
     };
     childCount(0, root);
-    var newHeight = d3.max(levelWidth) * 100; // 25 pixels per line
+    var newHeight = d3.max(levelWidth) * 65; // !!! 25 pixels per line
     tree = tree.size([newHeight, viewerWidth]);
 
     // Compute the new tree layout.
     var nodes = tree.nodes(root).reverse(),
         links = tree.links(nodes);
 
-    // Set widths between levels based on maxLabelLength.
+    // !!! Set widths between levels based on maxLabelLength.
     nodes.forEach(function (d) {
-        d.y = (d.depth * (maxLabelLength * 5)); //maxLabelLength * 10px
+        d.y = (d.depth * (maxLabelLength * 9)); //maxLabelLength * 10px 
         // alternatively to keep a fixed scale one can set a fixed depth per level
         // Normalize for fixed-depth by commenting out below line
         // d.y = (d.depth * 500); //500px per level.
@@ -211,7 +213,8 @@ function update(source) {
         .text(function (d) {
             return d.name;
         })
-        .style("fill-opacity", 0);
+        .style("fill-opacity", 0)
+        .style("font-size", 18); // !!! text size
 
     // phantom node to give us mouseover in a radius around it
     nodeEnter.append("circle")

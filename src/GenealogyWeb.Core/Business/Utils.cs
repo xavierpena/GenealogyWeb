@@ -20,7 +20,7 @@ namespace GenealogyWeb.Core.Business
         /// `male/female_sign name/surname1/surname2 (birth=>death) id=XXX`
         /// </summary>
         public static string GetPersonDescription(Person person)
-            => $"{ (person.is_male ? MaleSignStr : FemaleSignStr) } {GetStr(person.name)}/{GetStr(person.father_surname)}/{GetStr(person.mother_surname)}"
+            => $"{ (person.is_male ? MaleSignStr : FemaleSignStr) } {GetStr(person.father_surname).ToUpper()}/{GetStr(person.mother_surname).ToUpper()}/{GetStr(person.name)}"
                 + $" ({GetYear(person.birth_date) }=>{GetYear(person.death_date)})"
                 + $" id={person.id}";
 
@@ -56,7 +56,7 @@ namespace GenealogyWeb.Core.Business
         }
 
         internal static string GetMarriageDescription(Marriage marriage)
-            => $"{MarriageSignStr} Marriage ({ Utils.GetYear(marriage.date) }) id={marriage.id}";
+            => $"{MarriageSignStr} Marriage ({ Utils.GetYear(marriage.date) })";
 
         public static string GetDuplicateStr(Person person)
             => $"[ {AlertStr} DUPLICATE ] {GetPersonDescription(person)}";
