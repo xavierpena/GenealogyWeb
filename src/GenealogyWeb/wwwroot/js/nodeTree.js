@@ -27,7 +27,7 @@
         });
 
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-    var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+    var zoomListener = d3.behavior.zoom().scaleExtent([0.01, 3]).on("zoom", zoom);
     d3.selectAll('.ghostCircle').attr('class', 'ghostCircle show');
 
 
