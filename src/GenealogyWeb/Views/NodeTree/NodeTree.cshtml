@@ -11,8 +11,9 @@
 
     <br/>
 
-    <a href="/Main" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-arrow-right"></span>  Go to main page</a>
-
+    <a href="/Main" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-arrow-right"></span> Go to main page</a>
+    <br/><br />
+    Sort: <a href="javascript:sortByName()">by name</a> | <a href="javascript:sortByFrequency()">by frequency</a>
     <br />
 
     <hr />
@@ -24,10 +25,24 @@
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/d3/d3.min.js"></script>
+<script src="~/js/nodeTree.js"></script>
 <link rel="stylesheet" href="~/css/nodeTree.css" />
 
 <script>
+    var SortEnum = {
+        NAME: 1,
+        FREQUENCY: 2
+    };
+
     var treeData = @ViewData["json"];
+    TreeNode.init(treeData, SortEnum.NAME);
+
+    var sortByName = function () {
+        TreeNode.init(treeData, SortEnum.NAME);
+    }
+
+    var sortByFrequency = function () {
+        TreeNode.init(treeData, SortEnum.FREQUENCY);
+    }
 </script>
 
-<script src="~/js/nodeTree.js"></script>
